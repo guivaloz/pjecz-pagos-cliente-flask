@@ -6,12 +6,21 @@ Cliente del Portal de Pagos hecho con Flask.
 
 Crear archivo `.env` con
 
+    # API Citas V2 cliente
+    API_BASE_URL="http://localhost:8000/v2"
+    API_TIMEOUT=12
+
+    # Flask
     FLASK_APP=pagos_cliente_flask.app
     FLASK_DEBUG=1
 
-Crear archivo `.bashrc` que arranque el entorno virtual y cargue las variables
+    # Salt sirve para cifrar el ID con HashID
+    SALT=XXXXXXXXXXXXXXXXXXXXXXXX
 
-# pjecz-pagos-cliente-flask
+    # Secret key sirve para CSRF
+    SECRET_KEY=XXXXXXXXXXXXXXXXXXXXXXXX
+
+Crear archivo `.bashrc` que arranque el entorno virtual y cargue las variables
 
     if [ -f ~/.bashrc ]
     then
@@ -30,8 +39,11 @@ Crear archivo `.bashrc` que arranque el entorno virtual y cargue las variables
     then
         echo "-- Variables de entorno"
         export $(grep -v '^#' .env | xargs)
+        echo "   API_BASE_URL: ${API_BASE_URL}"
+        echo "   API_TIMEOUT: ${API_TIMEOUT}"
         echo "   FLASK_APP: ${FLASK_APP}"
         echo "   FLASK_DEBUG: ${FLASK_DEBUG}"
+        echo "   SALT: ${SALT}"
         echo
     fi
 

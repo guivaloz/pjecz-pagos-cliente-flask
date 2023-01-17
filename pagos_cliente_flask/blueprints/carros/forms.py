@@ -18,7 +18,7 @@ class IngresarForm(FlaskForm):
         "Primer apellido",
         validators=[DataRequired(), Length(min=3, max=64)],
     )
-    segundo_primero = StringField(
+    apellido_segundo = StringField(
         "Segundo apellido",
         validators=[DataRequired(), Length(min=3, max=64)],
     )
@@ -48,5 +48,5 @@ class RevisarForm(FlaskForm):
 
     descripcion = StringField("Trámite o servicio")
     email = EmailField("Email")
-    costo = StringField("Costo")
+    total = StringField("Total")
     continuar = SubmitField("Continuar")
