@@ -1,0 +1,29 @@
+{% extends 'layouts/app.jinja2' %}
+{% import 'macros/form.jinja2' as f with context %}
+
+{% block title %}Ingresar datos personales{% endblock %}
+
+{% block content %}
+    <div class="card">
+        <div class="card-header">
+            <h2>Trámite o servicio</h2>
+            <p>DEBE VENIR POR GET</p>
+        </div>
+        <div class="card-body">
+            <p>Registre sus datos para realizar el pago</p>
+            {% call f.form_tag('carros.ingresar', fid='carros_ingresar') %}
+                {% call f.form_group(form.nombres) %}{% endcall %}
+                {% call f.form_group(form.apellido_primero) %}{% endcall %}
+                {% call f.form_group(form.segundo_primero) %}{% endcall %}
+                {% call f.form_group(form.curp) %}{% endcall %}
+                {% call f.form_group(form.email) %}{% endcall %}
+                {% call f.form_group(form.telefono) %}{% endcall %}
+                {% call f.form_group(form.aceptar) %}{% endcall %}
+                {% call f.form_group(form.continuar) %}{% endcall %}
+            {% endcall %}
+        </div>
+    </div>
+{% endblock %}
+
+{% block custom_javascript %}
+{% endblock %}
