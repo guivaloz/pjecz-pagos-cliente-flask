@@ -1,13 +1,18 @@
 """
 Carros, vistas
 """
-from flask import abort, Blueprint, render_template, request, flash, redirect, url_for
+import re
+from flask import abort, Blueprint, render_template, request, redirect, url_for
+from hashids import Hashids
 import requests
 
-from config.settings import API_BASE_URL, API_TIMEOUT
-from lib.safe_string import safe_clave
+from config.settings import API_BASE_URL, API_TIMEOUT, SALT
+from lib.safe_string import safe_clave, safe_email, safe_string
 
 from .forms import IngresarForm, RevisarForm
+
+hashids = Hashids(SALT, min_length=8)
+hashid_regexp = re.compile("[0-9a-zA-Z]{8,16}")
 
 carros = Blueprint("carros", __name__, template_folder="templates")
 
@@ -17,6 +22,37 @@ def ingresar():
     """Ingresar datos personales"""
 
     # Si viene el formulario
+    form = IngresarForm()
+    if form.validate_on_submit():
+        request_body = {
+            "nombres": safe_string(form.nombres.data, save_enie=True),
+            "apellido_primero": safe_string(form.apellido_primero.data, save_enie=True),
+            "apellido_segundo": safe_string(form.apellido_segundo.data, save_enie=True),
+            "curp": safe_string(form.curp.data),
+            "email": safe_email(form.email.data),
+            "telefono": safe_string(form.telefono.data),
+            "pag_tramite_servicio_clave": safe_clave(form.clave.data),
+        }
+        try:
+            respuesta = requests.post(
+                f"{API_BASE_URL}/pag_pagos/carro",
+                json=request_body,
+                timeout=API_TIMEOUT,
+            )
+            respuesta.raise_for_status()
+        except requests.exceptions.ConnectionError as error:
+            abort(500, "No se pudo conectar con la API de pagos. " + str(error))
+        except requests.exceptions.Timeout as error:
+            abort(500, "Tiempo de espera agotado al conectar con la API de pagos. " + str(error))
+        except requests.exceptions.RequestException as error:
+            abort(500, "Error desconocido con la API de pagos. " + str(error))
+        datos = respuesta.json()
+        if "pag_pago_id" in datos and int(datos["pag_pago_id"]) > 0:
+            pag_pago_id = int(datos["pag_pago_id"])
+            pag_pago_id_hasheado = hashids.encode(pag_pago_id)
+            return redirect(url_for("carros.revisar", pag_pago_id_hasheado=pag_pago_id_hasheado))
+        else:
+            abort(500, "No se pudo agregar el trámite o servicio al carro.")
 
     # Tomar por GET la clave del tramite y servicio
     clave = safe_clave(request.args.get("clave"))
@@ -32,16 +68,13 @@ def ingresar():
         respuesta.raise_for_status()
     except requests.exceptions.ConnectionError as error:
         abort(500, "No se pudo conectar con la API de pagos. " + str(error))
-    except requests.exceptions.HTTPError as error:
-        abort(500, "Error en la API de pagos. " + str(error))
     except requests.exceptions.Timeout as error:
         abort(500, "Tiempo de espera agotado al conectar con la API de pagos. " + str(error))
     except requests.exceptions.RequestException as error:
-        abort(500, "Error desconocido al conectar con la API de pagos. " + str(error))
+        abort(500, "Error desconocido con la API de pagos. " + str(error))
     datos = respuesta.json()
 
     # Entregar el formulario para ingresar datos personales
-    form = IngresarForm()
     form.clave.data = clave
     return render_template(
         "carros/ingresar.jinja2",
@@ -55,11 +88,28 @@ def ingresar():
 def revisar(pag_pago_id_hasheado):
     """Revisar antes de ir al banco"""
 
-    # Validar el pago
+    # Consultar el pago
+    try:
+        respuesta = requests.get(
+            f"{API_BASE_URL}/pag_pagos/{pag_pago_id_hasheado}",
+            timeout=API_TIMEOUT,
+        )
+        respuesta.raise_for_status()
+    except requests.exceptions.ConnectionError as error:
+        abort(500, "No se pudo conectar con la API de pagos. " + str(error))
+    except requests.exceptions.Timeout as error:
+        abort(500, "Tiempo de espera agotado al conectar con la API de pagos. " + str(error))
+    except requests.exceptions.RequestException as error:
+        abort(500, "Error desconocido con la API de pagos. " + str(error))
+    datos = respuesta.json()
 
     # Entregar la pagina para revisar, con el boton para ir al banco
     form = RevisarForm()
-    form.descripcion.data = "Descripción del trámite o servicio"
-    form.email.data = "loquesea@noexiste.com"
-    form.costo.data = "$ 1,000.00"
-    return render_template("carros/revisar.jinja2", form=form, pag_pago_id_hasheado="abc123abc123")
+    form.descripcion.data = datos["pag_tramite_servicio_descripcion"]
+    form.email.data = datos["email"]
+    form.total.data = datos["total"]
+    return render_template(
+        "carros/revisar.jinja2",
+        form=form,
+        pag_pago_id_hasheado=pag_pago_id_hasheado,
+    )

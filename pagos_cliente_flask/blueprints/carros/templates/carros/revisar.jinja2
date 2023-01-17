@@ -14,7 +14,7 @@
             {% call f.form_tag('carros.revisar', fid='carros_revisar', **form_kwargs) %}
                 {% call f.form_group(form.descripcion) %}{% endcall %}
                 {% call f.form_group(form.email) %}{% endcall %}
-                {% call f.form_group(form.costo) %}{% endcall %}
+                {% call f.form_group(form.total) %}{% endcall %}
                 {% call f.form_group(form.continuar) %}{% endcall %}
             {% endcall %}
         </div>
