@@ -19,5 +19,21 @@ def procesar_lo_que_viene_del_banco():
 
     # Entregar la pagina donde el estado es FALLIDO
 
-    # Entregar la pagina donde el estado es PAGADO
+    # Entregar
     return render_template("resultados/pagado.jinja2")
+
+
+@resultados.route("/resultado/pagado", methods=["GET", "POST"])
+def resultado_pagado():
+    """Resultado pagado"""
+
+    # Entregar
+    return render_template("resultados/pagado.jinja2")
+
+
+@resultados.route("/resultado/fallido", methods=["GET", "POST"])
+def resultado_fallido():
+    """Resultado fallido"""
+
+    # Entregar
+    return render_template("resultados/fallido.jinja2")
