@@ -10,6 +10,7 @@ resultados = Blueprint("resultados", __name__, template_folder="templates")
 @resultados.route("/resultado", methods=["GET", "POST"])
 def procesar_lo_que_viene_del_banco():
     """Procesar lo que viene del banco"""
+    # pendiente
 
     # Tomar el PAYLOAD del banco
 
