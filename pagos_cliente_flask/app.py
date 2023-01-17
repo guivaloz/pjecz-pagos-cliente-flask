@@ -7,6 +7,7 @@ from .extensions import csrf
 
 from .blueprints.carros.views import carros
 from .blueprints.resultados.views import resultados
+from .blueprints.sistemas.views import sistemas
 
 
 def create_app():
@@ -16,11 +17,12 @@ def create_app():
     app = Flask(__name__)
 
     # Cargar la configuración
-    app.config.from_object('config.settings')
+    app.config.from_object("config.settings")
 
     # Registrar blueprints
     app.register_blueprint(carros)
     app.register_blueprint(resultados)
+    app.register_blueprint(sistemas)
 
     # Cargar las extensiones
     extensions(app)
