@@ -1,0 +1,47 @@
+{% extends "layouts/app.jinja2" %}
+
+{% block title %}Ingresar datos personales{% endblock %}
+
+{% block content %}
+    <div>
+        <h2>Registre sus datos para realizar el pago</h2>
+        <form>
+            <div class="mb-3">
+                <label for="inputTramiteServicio" class="form-label">Trámite o servicio</label>
+                <input type="email" class="form-control" id="inputTramiteServicio" aria-describedby="emailHelp">
+            </div>
+            <div class="mb-3">
+                <label for="inputNombre" class="form-label">Nombre</label>
+                <input type="email" class="form-control" id="inputNombre" aria-describedby="emailHelp">
+            </div>
+            <div class="mb-3">
+                <label for="inputPrimerApellido" class="form-label">Primer apellido</label>
+                <input type="email" class="form-control" id="inputPrimerApellido" aria-describedby="emailHelp">
+            </div>
+            <div class="mb-3">
+                <label for="inputSegundoApellido" class="form-label">Segundo apellido</label>
+                <input type="email" class="form-control" id="inputSegundoApellido" aria-describedby="emailHelp">
+            </div>
+            <div class="mb-3">
+                <label for="inputCURP" class="form-label">CURP</label>
+                <input type="email" class="form-control" id="inputCURP" aria-describedby="emailHelp">
+            </div>
+            <div class="mb-3">
+                <label for="inputTelefono" class="form-label">Teléfono celular</label>
+                <input type="email" class="form-control" id="inputTelefono" aria-describedby="emailHelp">
+            </div>
+            <div class="mb-3">
+                <label for="inputEmail" class="form-label">Correo electrónico</label>
+                <input type="email" class="form-control" id="inputEmail" aria-describedby="emailHelp">
+            </div>
+            <div class="mb-3 form-check">
+                <input type="checkbox" class="form-check-input" id="checkAvisoPrivacidad">
+                <label class="form-check-label" for="checkAvisoPrivacidad">He leío y acepto el Aviso de Privacidad</label>
+            </div>
+            <button type="submit" class="btn btn-primary">Continuar</button>
+        </form>
+    </div>
+{% endblock %}
+
+{% block custom_javascript %}
+{% endblock %}

@@ -1,0 +1,6 @@
+black
+Flask
+Flask-WTF
+Jinja2
+pylint
+python-dotenv
