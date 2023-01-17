@@ -3,6 +3,7 @@ Carros, vistas
 """
 from flask import Blueprint, render_template, request, flash, redirect, url_for
 
+from .forms import IngresarForm
 
 carros = Blueprint("carros", __name__, template_folder="templates")
 
@@ -18,7 +19,8 @@ def ingresar():
     # Validar que exista el tramite y servicio
 
     # Entregar el formulario para ingresar datos personales
-    return render_template("carros/ingresar.jinja2")
+    form = IngresarForm()
+    return render_template("carros/ingresar.jinja2", form=form)
 
 
 @carros.route("/carro/<int:pag_pago_id>", methods=["GET", "POST"])
