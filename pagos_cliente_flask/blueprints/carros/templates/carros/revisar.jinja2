@@ -4,19 +4,45 @@
 {% block title %}Revise cuidadosamente antes de pagar{% endblock %}
 
 {% block content %}
-    <div class="card">
-        <div class="card-header">
-            <h2>Revise cuidadosamente antes de pagar</h2>
-        </div>
-        <div class="card-body">
-            <p>Al dar clic en el botón Continuar será redirigido al banco</p>
-            {% set form_kwargs = {'pag_pago_id_hasheado': pag_pago_id_hasheado} %}
-            {% call f.form_tag('carros.revisar', fid='carros_revisar', **form_kwargs) %}
-                {% call f.form_group(form.descripcion) %}{% endcall %}
-                {% call f.form_group(form.email) %}{% endcall %}
-                {% call f.form_group(form.total) %}{% endcall %}
-                {% call f.form_group(form.continuar) %}{% endcall %}
-            {% endcall %}
+    <div class="row m-5 justify-content-md-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h3>Revise cuidadosamente antes de pagar</h3>
+                </div>
+                <div class="card-body">
+                    {% set form_kwargs = {'pag_pago_id_hasheado': pag_pago_id_hasheado} %}
+                    {% call f.form_tag('carros.revisar', fid='carros_revisar', **form_kwargs) %}
+                    <div class="row">
+                        <div class="col-md-12">
+                            <label>Descripción</label>
+                            <input type="text" readonly value="{{ descripcion }}" class="form-control">
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <label>Correo electrónico</label>
+                            <input type="text" readonly value="{{ email }}" class="form-control">
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <label>Total a pagar</label>
+                            <input type="text" readonly value="{{ total }}" class="form-control">
+                        </div>
+                    </div>    
+                    <br>
+                    <div class="row">
+                        <p class="text-warning">Al dar clic en el botón Continuar será redirigido al banco</p>
+                        <div class="col-md-12 text-center">
+                            {% call f.form_group(form.continuar) %}{% endcall %}    
+                        </div>
+                    </div>
+                    {% endcall %}
+                </div>
+            </div>
         </div>
     </div>
 {% endblock %}

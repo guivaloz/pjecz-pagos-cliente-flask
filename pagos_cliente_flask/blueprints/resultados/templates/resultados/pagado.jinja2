@@ -3,13 +3,21 @@
 {% block title %}Su proceso de pago ha terminado con exito{% endblock %}
 
 {% block content %}
-    <div class="px-4 py-5 my-5 text-center">
-        <h1 class="display-5 fw-bold mb-4">Su pago se ha acreditado correctamente</h1>
-        <div class="col-lg-6 mx-auto">
-            <p class="lead mb-4">En unos momentos recibirá un mensaje por correo electrónico con los datos de la operación.</p>
-            <p class="lead mb-4">Gracias por usar el Portal de Pagos.</p>
-            <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
-                <button type="button" class="btn btn-outline-secondary btn-lg px-4">Ir a PJECZ.gob.mx</button>
+    <div class="row justify-content-md-center m-5">
+        <div class="col-md-8">
+            <div class="card">
+                <img class="card-img-top" src="{{ url_for('static', filename='images/success-true.gif') }}" alt="Error al procesar el pago">
+                <div class="card-body">
+                    <h4 > <b>Su pago se ha acreditado correctamente </b></h4>
+                    <p class="lead mb-4">
+                        En unos momentos recibirá un mensaje por correo electrónico con los datos de la operación.
+                    </p>
+                    <p class="lead mb-4">Gracias por usar el Portal de Pagos.</p>
+                    <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
+                        <button type="button" class="btn btn-outline-secondary btn-lg px-4">Ir a PJECZ.gob.mx</button>
+                    </div>
+
+                </div>
             </div>
         </div>
     </div>

@@ -3,20 +3,29 @@
 {% block title %}Lamentablemente la operacion bancaria no fue exitosa{% endblock %}
 
 {% block content %}
-    <div class="px-4 py-5 my-5 text-center">
-        <h1 class="display-5 fw-bold mb-4">Ha surgido un error al procesar su pago</h1>
-        <div class="col-lg-6 mx-auto">
-            <p class="lead mb-4">
-                El servicio bancario ha infomado que no pudo hacer la operación.
-                Revise la información de su cuenta o tarjeta y repita el proceso si así lo desea.
-            </p>
-            <p class="lead mb-4">Gracias por usar el Portal de Pagos.</p>
-            <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
-                <button type="button" class="btn btn-outline-secondary btn-lg px-4">Ir a Trámites y Servicios en PJECZ.gob.mx</button>
+
+    <div class="row justify-content-md-center m-5">
+        <div class="col-md-8">
+            <div class="card">
+                <img class="card-img-top" src="{{ url_for('static', filename='images/success-false.gif') }}" alt="Error al procesar el pago">
+                <div class="card-body">
+                    <h4>Ha surgido un error al procesar su pago</h4>
+
+                    <p class="lead mb-4">
+                        El servicio bancario ha infomado que no pudo hacer la operación.
+                        Revise la información de su cuenta o tarjeta y repita el proceso si así lo desea.
+                    </p>
+                    <p class="lead mb-4">Gracias por usar el Portal de Pagos.</p>
+                    <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
+                        <button type="button" class="btn btn-outline-secondary btn-lg px-4">Ir a Trámites y Servicios en PJECZ.gob.mx</button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
+
 {% endblock %}
 
 {% block custom_javascript %}
 {% endblock %}
+
