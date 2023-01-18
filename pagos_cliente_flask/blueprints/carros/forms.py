@@ -4,6 +4,7 @@ Carros, formularios
 from flask_wtf import FlaskForm
 from wtforms import BooleanField, EmailField, HiddenField, StringField, SubmitField
 from wtforms.validators import DataRequired, Length
+from flask_wtf.recaptcha import RecaptchaField
 
 
 class IngresarForm(FlaskForm):
@@ -36,6 +37,7 @@ class IngresarForm(FlaskForm):
         validators=[DataRequired(), Length(min=10, max=10)],
         render_kw={"placeholder": "10 dígitos sin espacios ni guiones"},
     )
+    recaptcha = RecaptchaField()
     aceptar = BooleanField(
         "He leído y acepto el Aviso de Privacidad",
         validators=[DataRequired()],

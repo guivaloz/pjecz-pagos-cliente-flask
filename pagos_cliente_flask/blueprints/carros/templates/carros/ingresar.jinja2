@@ -42,7 +42,11 @@
                                 {% call f.form_group(form.email) %}{% endcall %}
                             </div>
                         </div>
-                        
+                        <div class="row">
+                            <div class="col-md-12">
+                                {% call f.form_group(form.recaptcha) %}{% endcall %}
+                            </div>
+                        </div>
                         
                         {% call f.form_group(form.aceptar) %}{% endcall %}
                         <div class="row">
