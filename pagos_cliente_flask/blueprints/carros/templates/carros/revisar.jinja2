@@ -15,8 +15,8 @@
                 {% call f.form_group(form.descripcion) %}{% endcall %}
                 {% call f.form_group(form.email) %}{% endcall %}
                 {% call f.form_group(form.total) %}{% endcall %}
-                {% call f.form_group(form.continuar) %}{% endcall %}
             {% endcall %}
+            <a class='btn btn-success' href="{{url}}">Ir al Banco</a>
         </div>
     </div>
 {% endblock %}

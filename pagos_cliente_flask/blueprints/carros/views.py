@@ -50,8 +50,12 @@ def ingresar():
         if not "pag_pago_id" in datos:
             abort(500, "No se pudo agregar el trámite o servicio al carro.")
 
-        # Redirigir a la página de revisión
-        return redirect(url_for("carros.revisar", pag_pago_id_hasheado=cifrar_id(int(datos["pag_pago_id"]))))
+        # Entregar la pagina para revisar, con el bóton para ir al banco
+        form = RevisarForm()
+        form.descripcion.data = datos["descripcion"]
+        form.email.data = datos["email"]
+        form.total.data = datos["monto"]
+        return render_template("carros/revisar.jinja2", form=form, pag_pago_id_hasheado=cifrar_id(int(datos["pag_pago_id"])), url=datos["url"])
 
     # Tomar por GET la clave del tramite y servicio
     clave = safe_clave(request.args.get("clave"))
