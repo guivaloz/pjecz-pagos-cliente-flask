@@ -21,9 +21,6 @@ def procesar_lo_que_viene_del_banco():
 
     # Preparar el cuerpo a enviar a la API "/pag_pagos/resultado"
     request_body = {
-        "estado": "PAGADO",
-        "folio": "001",
-        "pag_pago_id": 1,
         "xml_encriptado": request.form["strResponse"],
     }
 

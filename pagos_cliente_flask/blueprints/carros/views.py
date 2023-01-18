@@ -6,7 +6,7 @@ import requests
 
 from config.settings import API_BASE_URL, API_TIMEOUT
 from lib.safe_string import safe_clave, safe_email, safe_string
-from lib.hashids import cifrar_id
+from lib.hashids import cifrar_id, descifrar_id
 
 from .forms import IngresarForm, RevisarForm
 
@@ -88,6 +88,11 @@ def ingresar():
 @carros.route("/carro/<string:pag_pago_id_hasheado>", methods=["GET", "POST"])
 def revisar(pag_pago_id_hasheado):
     """Revisar antes de ir al banco"""
+
+    # Valiar el ID cifrado
+    pag_pago_id = descifrar_id(pag_pago_id_hasheado)
+    if pag_pago_id is None:
+        abort(400, "No es válido el ID del pago.")
 
     # Consultar el pago
     try:
