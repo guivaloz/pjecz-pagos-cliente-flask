@@ -49,4 +49,3 @@ class RevisarForm(FlaskForm):
     descripcion = StringField("Trámite o servicio")
     email = EmailField("Email")
     total = StringField("Total")
-    continuar = SubmitField("Continuar")
