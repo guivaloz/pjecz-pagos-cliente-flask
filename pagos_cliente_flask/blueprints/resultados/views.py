@@ -14,6 +14,7 @@ resultados = Blueprint("resultados", __name__, template_folder="templates")
 @csrf.exempt
 def procesar_lo_que_viene_del_banco():
     """Procesar lo que viene del banco"""
+    # pendiente
 
     # Si no viene el payload del banco por POST
     if not request.form:

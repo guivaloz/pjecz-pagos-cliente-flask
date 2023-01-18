@@ -3,11 +3,18 @@
 {% block title %}Error 500{% endblock %}
 
 {% block content %}
-    <div class="px-4 py-5 my-5 text-center">
-        <h1 class="display-5 fw-bold mb-4">Error 500</h1>
-        <div class="col-lg-6 mx-auto">
-            <p class="lead mb-4">Error del servidor.</p>
-            <p class="lead mb-4">{{ error }}</p>
+    <div class="row justify-content-md-center">
+        <div class="col-md-8">
+
+            <div class="card mt-5 p-5">
+                <img src="{{ url_for('static',filename='images/logo_pjecz.png') }}" class="card-img-top"  >
+                <div class="card-body">
+                        <hr>
+                        <h1 class="display-5 fw-bold mb-4">Error 505</h1>
+                        <p class="lead mb-4">Error del servidor.</p>
+                        <p class="lead mb-4">{{ error }}</p>
+                </div>        
+            </div>
         </div>
     </div>
 {% endblock %}

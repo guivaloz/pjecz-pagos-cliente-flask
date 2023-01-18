@@ -4,27 +4,63 @@
 {% block title %}Ingresar datos personales{% endblock %}
 
 {% block content %}
-    <div class="card">
-        <div class="card-header">
-            <h2>{{ descripcion }}</h2>
-            <p>Costo: <strong>$ {{ costo }}</strong></p>
+    <div class="row justify-content-md-center m-5">
+        <div class="col-12 col-md-8">
+            <div class="card">
+                <div class="card-header text-center">
+                    <img src="{{url_for('static',filename='images/pagos.png')}}">
+                </div>
+                <div class="card-body">
+                    <div class="col-md-12 tramite p-2 rounded">
+                        <h2>{{ descripcion }}</h2>
+                        <p>Costo: <strong>$ {{ costo }}</strong></p>    
+                    </div>
+                    <br>
+                    <h5>Registre sus datos para realizar el pago</h5>
+                    {% call f.form_tag('carros.ingresar', fid='carros_ingresar') %}
+                        <div class="row">
+                            <div class="col-md-4">
+                                {% call f.form_group(form.nombres) %}{% endcall %}
+                            </div>
+                            <div class="col-md-4">
+                                {% call f.form_group(form.apellido_primero) %}{% endcall %}
+                            </div>
+                            <div class="col-md-4">
+                                {% call f.form_group(form.apellido_segundo) %}{% endcall %}
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                               {% call f.form_group(form.curp) %}{% endcall %}
+                            </div>
+                            <div class="col-md-6">
+                                {% call f.form_group(form.telefono) %}{% endcall %}
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                {% call f.form_group(form.email) %}{% endcall %}
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                {% call f.form_group(form.recaptcha) %}{% endcall %}
+                            </div>
+                        </div>
+                        
+                        {% call f.form_group(form.aceptar) %}{% endcall %}
+                        <div class="row">
+                            <div class="col-md-12 text-center">
+                                {% call f.form_group(form.continuar) %}{% endcall %}
+                            </div>
+                        </div>
+                        
+                    {% endcall %}
+                </div>
+            </div>    
         </div>
-        <div class="card-body">
-            <p>Registre sus datos para realizar el pago</p>
-            {% call f.form_tag('carros.ingresar', fid='carros_ingresar') %}
-                {% call f.form_group(form.clave) %}{% endcall %}
-                {% call f.form_group(form.nombres) %}{% endcall %}
-                {% call f.form_group(form.apellido_primero) %}{% endcall %}
-                {% call f.form_group(form.apellido_segundo) %}{% endcall %}
-                {% call f.form_group(form.curp) %}{% endcall %}
-                {% call f.form_group(form.email) %}{% endcall %}
-                {% call f.form_group(form.telefono) %}{% endcall %}
-                {% call f.form_group(form.aceptar) %}{% endcall %}
-                {% call f.form_group(form.continuar) %}{% endcall %}
-            {% endcall %}
-        </div>
-    </div>
-{% endblock %}
+    </div> 
+    {% endblock %}
 
 {% block custom_javascript %}
 {% endblock %}

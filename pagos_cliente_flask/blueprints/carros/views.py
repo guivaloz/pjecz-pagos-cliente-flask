@@ -123,5 +123,8 @@ def revisar(pag_pago_id_hasheado):
     return render_template(
         "carros/revisar.jinja2",
         form=form,
+        descripcion=datos["pag_tramite_servicio_descripcion"],
+        email=datos["email"],
+        total=datos["total"],
         pag_pago_id_hasheado=pag_pago_id_hasheado,
     )

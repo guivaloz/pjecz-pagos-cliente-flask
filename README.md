@@ -20,6 +20,10 @@ Crear archivo `.env` con
     # Secret key sirve para CSRF
     SECRET_KEY=XXXXXXXXXXXXXXXXXXXXXXXX
 
+    # reCAPTCHA configuration
+    RECAPTCHA_PUBLIC_KEY = os.environ.get("RECAPTCHA_PUBLIC_KEY", "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx")
+    RECAPTCHA_PRIVATE_KEY = os.environ.get("RECAPTCHA_PRIVATE_KEY" "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx")
+
 Crear archivo `.bashrc` que arranque el entorno virtual y cargue las variables
 
     if [ -f ~/.bashrc ]

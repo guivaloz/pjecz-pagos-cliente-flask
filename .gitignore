@@ -6,3 +6,4 @@
 *.py[cod]
 __pycache__/
 /venv/
+/pagos_cliente_flask/static/images/
