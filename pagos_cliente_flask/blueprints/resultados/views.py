@@ -4,12 +4,14 @@ Resultados, vistas
 from flask import abort, Blueprint, render_template, request, redirect, url_for
 import requests
 
+from pagos_cliente_flask.extensions import csrf
 from config.settings import API_BASE_URL, API_TIMEOUT
 
 resultados = Blueprint("resultados", __name__, template_folder="templates")
 
 
 @resultados.route("/resultado", methods=["GET", "POST"])
+@csrf.exempt
 def procesar_lo_que_viene_del_banco():
     """Procesar lo que viene del banco"""
 
