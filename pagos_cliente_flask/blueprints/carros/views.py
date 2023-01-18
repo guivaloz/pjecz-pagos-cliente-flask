@@ -1,18 +1,14 @@
 """
 Carros, vistas
 """
-import re
 from flask import abort, Blueprint, render_template, request, redirect, url_for
-from hashids import Hashids
 import requests
 
-from config.settings import API_BASE_URL, API_TIMEOUT, SALT
+from config.settings import API_BASE_URL, API_TIMEOUT
 from lib.safe_string import safe_clave, safe_email, safe_string
+from lib.hashids import cifrar_id
 
 from .forms import IngresarForm, RevisarForm
-
-hashids = Hashids(SALT, min_length=8)
-hashid_regexp = re.compile("[0-9a-zA-Z]{8,16}")
 
 carros = Blueprint("carros", __name__, template_folder="templates")
 
@@ -49,8 +45,7 @@ def ingresar():
         datos = respuesta.json()
         if "pag_pago_id" in datos and int(datos["pag_pago_id"]) > 0:
             pag_pago_id = int(datos["pag_pago_id"])
-            pag_pago_id_hasheado = hashids.encode(pag_pago_id)
-            return redirect(url_for("carros.revisar", pag_pago_id_hasheado=pag_pago_id_hasheado))
+            return redirect(url_for("carros.revisar", pag_pago_id_hasheado=cifrar_id(pag_pago_id)))
         else:
             abort(500, "No se pudo agregar el trámite o servicio al carro.")
 

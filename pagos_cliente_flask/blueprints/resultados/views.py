@@ -1,8 +1,7 @@
 """
 Resultados, vistas
 """
-from flask import Blueprint, render_template, request, flash, redirect, url_for
-
+from flask import abort, Blueprint, render_template, request, redirect, url_for
 
 resultados = Blueprint("resultados", __name__, template_folder="templates")
 
