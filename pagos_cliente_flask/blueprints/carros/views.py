@@ -1,7 +1,7 @@
 """
 Carros, vistas
 """
-from flask import abort, Blueprint, render_template, request, redirect, url_for
+from flask import abort, Blueprint, render_template, redirect, request, url_for
 import requests
 
 from config.settings import API_BASE_URL, API_TIMEOUT
@@ -44,6 +44,8 @@ def ingresar():
             abort(500, "No se pudo conectar con la API de pagos. " + str(error))
         except requests.exceptions.Timeout as error:
             abort(500, "Tiempo de espera agotado al conectar con la API de pagos. " + str(error))
+        except requests.exceptions.HTTPError as error:
+            abort(500, "Error HTTP porque la API de pagos arrojó un problema: " + str(error))
         except requests.exceptions.RequestException as error:
             abort(500, "Error desconocido con la API de pagos. " + str(error))
         datos = respuesta.json()
@@ -51,11 +53,14 @@ def ingresar():
             abort(500, "No se pudo agregar el trámite o servicio al carro.")
 
         # Entregar la pagina para revisar, con el bóton para ir al banco
-        form = RevisarForm()
-        form.descripcion.data = datos["descripcion"]
-        form.email.data = datos["email"]
-        form.total.data = datos["monto"]
-        return render_template("carros/revisar.jinja2", form=form, pag_pago_id_hasheado=cifrar_id(int(datos["pag_pago_id"])), url=datos["url"])
+        # form = RevisarForm()
+        # form.descripcion.data = datos["descripcion"]
+        # form.email.data = datos["email"]
+        # form.total.data = datos["monto"]
+        # return render_template("carros/revisar.jinja2", form=form, pag_pago_id_hasheado=cifrar_id(int(datos["pag_pago_id"])), url=datos["url"])
+
+        # Redireccionar a la página de revisión
+        return redirect(url_for("carros.revisar", pag_pago_id_hasheado=cifrar_id(int(datos["pag_pago_id"])), banco_url=datos["url"]))
 
     # Tomar por GET la clave del tramite y servicio
     clave = safe_clave(request.args.get("clave"))
@@ -73,6 +78,8 @@ def ingresar():
         abort(500, "No se pudo conectar con la API de pagos. " + str(error))
     except requests.exceptions.Timeout as error:
         abort(500, "Tiempo de espera agotado al conectar con la API de pagos. " + str(error))
+    except requests.exceptions.HTTPError as error:
+        abort(500, "Error HTTP porque la API de pagos arrojó un problema: " + str(error))
     except requests.exceptions.RequestException as error:
         abort(500, "Error desconocido con la API de pagos. " + str(error))
     datos = respuesta.json()
@@ -93,6 +100,11 @@ def ingresar():
 def revisar(pag_pago_id_hasheado):
     """Revisar antes de ir al banco"""
 
+    # Si viene el url del banco
+    url = request.args.get("banco_url")
+    if url is None:
+        url = ""
+
     # Valiar el ID cifrado
     pag_pago_id = descifrar_id(pag_pago_id_hasheado)
     if pag_pago_id is None:
@@ -109,6 +121,8 @@ def revisar(pag_pago_id_hasheado):
         abort(500, "No se pudo conectar con la API de pagos. " + str(error))
     except requests.exceptions.Timeout as error:
         abort(500, "Tiempo de espera agotado al conectar con la API de pagos. " + str(error))
+    except requests.exceptions.HTTPError as error:
+        abort(500, "Error HTTP porque la API de pagos arrojó un problema: " + str(error))
     except requests.exceptions.RequestException as error:
         abort(500, "Error desconocido con la API de pagos. " + str(error))
     datos = respuesta.json()
@@ -127,4 +141,5 @@ def revisar(pag_pago_id_hasheado):
         email=datos["email"],
         total=datos["total"],
         pag_pago_id_hasheado=pag_pago_id_hasheado,
+        url=url,
     )
