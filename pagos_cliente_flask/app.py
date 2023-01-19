@@ -3,11 +3,11 @@ Flask App
 """
 from flask import Flask
 
-from .extensions import csrf
-
+from .blueprints.avisos.views import avisos
 from .blueprints.carros.views import carros
 from .blueprints.resultados.views import resultados
 from .blueprints.sistemas.views import sistemas
+from .extensions import csrf
 
 
 def create_app():
@@ -23,6 +23,7 @@ def create_app():
     app.register_blueprint(carros)
     app.register_blueprint(resultados)
     app.register_blueprint(sistemas)
+    app.register_blueprint(avisos)
 
     # Cargar las extensiones
     extensions(app)
