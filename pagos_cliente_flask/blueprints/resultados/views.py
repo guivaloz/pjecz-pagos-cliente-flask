@@ -38,6 +38,8 @@ def procesar_lo_que_viene_del_banco():
         abort(500, "No se pudo conectar con la API de pagos. " + str(error))
     except requests.exceptions.Timeout as error:
         abort(500, "Tiempo de espera agotado al conectar con la API de pagos. " + str(error))
+    except requests.exceptions.HTTPError as error:
+        abort(500, "Error HTTP porque la API de pagos arrojó un problema: " + str(error))
     except requests.exceptions.RequestException as error:
         abort(500, "Error desconocido con la API de pagos. " + str(error))
     datos = respuesta.json()
