@@ -47,7 +47,10 @@ Crear archivo `.bashrc` que arranque el entorno virtual y cargue las variables
         echo "   API_TIMEOUT: ${API_TIMEOUT}"
         echo "   FLASK_APP: ${FLASK_APP}"
         echo "   FLASK_DEBUG: ${FLASK_DEBUG}"
+        echo "   RECAPTCHA_PUBLIC_KEY: ${RECAPTCHA_PUBLIC_KEY}"
+        echo "   RECAPTCHA_PRIVATE_KEY: ${RECAPTCHA_PRIVATE_KEY}"
         echo "   SALT: ${SALT}"
+        echo "   SECRET_KEY: ${SECRET_KEY}"
         echo
     fi
 
