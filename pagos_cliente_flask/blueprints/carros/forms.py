@@ -2,9 +2,9 @@
 Carros, formularios
 """
 from flask_wtf import FlaskForm
+from flask_wtf.recaptcha import RecaptchaField
 from wtforms import BooleanField, EmailField, HiddenField, StringField, SubmitField
 from wtforms.validators import DataRequired, Length
-from flask_wtf.recaptcha import RecaptchaField
 
 
 class IngresarForm(FlaskForm):
@@ -39,7 +39,7 @@ class IngresarForm(FlaskForm):
     )
     recaptcha = RecaptchaField()
     aceptar = BooleanField(
-        "He leído y acepto el Aviso de Privacidad",
+        "He leído y acepto el <a href='/aviso' class='nav-link link-aviso'>Aviso de Privacidad</a>",
         validators=[DataRequired()],
     )
     continuar = SubmitField("Continuar")
