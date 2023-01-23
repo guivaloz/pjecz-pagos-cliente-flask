@@ -8,7 +8,7 @@ from config.settings import API_BASE_URL, API_TIMEOUT
 from lib.safe_string import safe_clave, safe_email, safe_string
 from lib.hashids import cifrar_id, descifrar_id
 
-from .forms import IngresarForm, RevisarForm
+from .forms import IngresarForm
 
 carros = Blueprint("carros", __name__, template_folder="templates")
 
@@ -118,9 +118,7 @@ def revisar(pag_pago_id_hasheado):
     """Revisar antes de ir al banco"""
 
     # Si viene el url del banco
-    url = request.args.get("banco_url")
-    if url is None:
-        url = ""
+    url = request.args.get(key="banco_url", default="")
 
     # Valiar el ID cifrado
     pag_pago_id = descifrar_id(pag_pago_id_hasheado)
@@ -154,24 +152,31 @@ def revisar(pag_pago_id_hasheado):
 
     # Validar que se haya recibido la descripcion
     if not "pag_tramite_servicio_descripcion" in datos:
-        abort(400, "No se pudo obtener la descripción del trámite o servicio.")
+        abort(400, "No se recibió la descripción del trámite o servicio.")
 
     # Validar que se haya recibido el email
     if not "email" in datos:
-        abort(400, "No se pudo obtener el email.")
+        abort(400, "No se recibió el email.")
 
     # Validar que se haya recibido el total
     if not "total" in datos:
-        abort(400, "No se pudo obtener el total.")
+        abort(400, "No se recibió el total.")
+
+    # Validar que se haya recibido el total
+    if not "estado" in datos:
+        abort(400, "No se recibió el estado del pago.")
+
+    # Si el estado es PAGADO, redireccionar a la página de pago exitoso
+    if datos["estado"] == "PAGADO":
+        return redirect(url_for("resultados.resultado_pagado", folio=datos["folio"]))
+
+    # Si el estado es FALLIDO o CANCELADO, redireccionar a la página de pago fallido
+    if datos["estado"] == "FALLIDO" or datos["estado"] == "CANCELADO":
+        return redirect(url_for("resultados.resultado_fallido", folio=datos["folio"]))
 
     # Entregar la pagina para revisar, con el boton para ir al banco
-    form = RevisarForm()
-    form.descripcion.data = datos["pag_tramite_servicio_descripcion"]
-    form.email.data = datos["email"]
-    form.total.data = datos["total"]
     return render_template(
         "carros/revisar.jinja2",
-        form=form,
         descripcion=datos["pag_tramite_servicio_descripcion"],
         email=datos["email"],
         total=datos["total"],
