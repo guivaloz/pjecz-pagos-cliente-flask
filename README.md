@@ -6,8 +6,8 @@ Cliente del Portal de Pagos hecho con Flask.
 
 Crear archivo `.env` con
 
-    # API Citas V2 cliente
-    API_BASE_URL="http://localhost:8000/v2"
+    # API Citas V3 cliente: el cual usa success y message
+    API_BASE_URL="http://localhost:8000/v3"
     API_TIMEOUT=12
 
     # Flask

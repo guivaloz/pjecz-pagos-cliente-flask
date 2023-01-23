@@ -8,15 +8,23 @@
             <div class="card">
                 <img class="card-img-top" style="max-height: 200px ;" src="https://storage.googleapis.com/pjecz-informatica/static/images/pagos-resultado-pagado.gif" alt="Error al procesar el pago">
                 <div class="card-body">
-                    <h4 > <b>Su pago se ha acreditado correctamente </b></h4>
+                    <h4>
+                        Su pago se ha acreditado correctamente
+                    </h4>
                     <p class="lead mb-4">
                         En unos momentos recibirá un mensaje por correo electrónico con los datos de la operación.
                     </p>
-                    <p class="lead mb-4">Gracias por usar el Portal de Pagos.</p>
+                    {% if folio != '' %}
+                        <p class="lead mb-4">
+                            Folio reportado por la institución financiera: <strong>{{ folio }}</strong>
+                        </p>
+                    {% endif %}
+                    <p class="lead mb-4">
+                        Gracias por usar el Portal de Pagos.
+                    </p>
                     <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
                         <button type="button" class="btn btn-outline-secondary btn-lg px-4">Ir a PJECZ.gob.mx</button>
                     </div>
-
                 </div>
             </div>
         </div>

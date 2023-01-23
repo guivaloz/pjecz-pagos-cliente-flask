@@ -43,28 +43,52 @@ def procesar_lo_que_viene_del_banco():
     except requests.exceptions.RequestException as error:
         abort(500, "Error desconocido con la API de pagos. " + str(error))
     datos = respuesta.json()
-    if "estado" not in datos or "folio" not in datos:
-        abort(500, "No se pudo terminar el proceso de pago.")
+
+    # Verificar que haya tenido exito
+    if not "success" in datos:
+        abort(400, "No se pudo actualizar el carro de pagos.")
+    if not datos["success"]:
+        if "message" in datos:
+            abort(400, datos["message"])
+        abort(400, "No se pudo actualizar el carro de pagos.")
+
+    # Validar que haya recibido el estado
+    if not "estado" in datos:
+        abort(400, "No se pudo obtener el estado del pago.")
+
+    # Validar que haya recibido el folio
+    if not "folio" in datos:
+        abort(400, "No se pudo obtener el folio del pago.")
 
     # Redirigir a la página de resultado PAGADO
     if datos["estado"] == "PAGADO":
-        return redirect(url_for("resultados.resultado_pagado"))
+        return redirect(url_for("resultados.resultado_pagado", folio=datos["folio"]))
 
     # De lo contrario, el reultado es FALLIDO
-    return redirect(url_for("resultados.resultado_fallido"))
+    return redirect(url_for("resultados.resultado_fallido", folio=datos["folio"]))
 
 
 @resultados.route("/resultado/pagado", methods=["GET", "POST"])
 def resultado_pagado():
     """Resultado pagado"""
 
+    # Si viene el folio
+    folio = request.args.get("folio")
+    if folio is None:
+        folio = ""
+
     # Entregar
-    return render_template("resultados/pagado.jinja2")
+    return render_template("resultados/pagado.jinja2", folio=folio)
 
 
 @resultados.route("/resultado/fallido", methods=["GET", "POST"])
 def resultado_fallido():
     """Resultado fallido"""
 
+    # Si viene el folio
+    folio = request.args.get("folio")
+    if folio is None:
+        folio = ""
+
     # Entregar
-    return render_template("resultados/fallido.jinja2")
+    return render_template("resultados/fallido.jinja2", folio=folio)

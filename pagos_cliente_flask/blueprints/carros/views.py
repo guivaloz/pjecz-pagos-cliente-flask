@@ -49,15 +49,18 @@ def ingresar():
         except requests.exceptions.RequestException as error:
             abort(500, "Error desconocido con la API de pagos. " + str(error))
         datos = respuesta.json()
-        if not "pag_pago_id" in datos:
-            abort(500, "No se pudo agregar el trámite o servicio al carro.")
 
-        # Entregar la pagina para revisar, con el bóton para ir al banco
-        # form = RevisarForm()
-        # form.descripcion.data = datos["descripcion"]
-        # form.email.data = datos["email"]
-        # form.total.data = datos["monto"]
-        # return render_template("carros/revisar.jinja2", form=form, pag_pago_id_hasheado=cifrar_id(int(datos["pag_pago_id"])), url=datos["url"])
+        # Verificar que haya tenido exito
+        if not "success" in datos:
+            abort(400, "No se pudo crear el carro para pagar.")
+        if not datos["success"]:
+            if "message" in datos:
+                abort(400, datos["message"])
+            abort(400, "No se pudo crear el carro para pagar.")
+
+        # Validar que haya recibido el id del pago
+        if not "pag_pago_id" in datos:
+            abort(400, "No se pudo obtener el id del pago.")
 
         # Redireccionar a la página de revisión
         return redirect(url_for("carros.revisar", pag_pago_id_hasheado=cifrar_id(int(datos["pag_pago_id"])), banco_url=datos["url"]))
@@ -83,8 +86,22 @@ def ingresar():
     except requests.exceptions.RequestException as error:
         abort(500, "Error desconocido con la API de pagos. " + str(error))
     datos = respuesta.json()
-    if not "descripcion" in datos or not "costo" in datos:
-        abort(500, "No se pudo consultar el trámite o servicio.")
+
+    # Verificar que haya tenido exito
+    if not "success" in datos:
+        abort(400, "No se pudo consultar el trámite o servicio.")
+    if not datos["success"]:
+        if "message" in datos:
+            abort(400, datos["message"])
+        abort(400, "No se pudo consultar el trámite o servicio.")
+
+    # Validar que haya recibido la descripcion
+    if not "descripcion" in datos:
+        abort(400, "No se pudo obtener la descripción del trámite o servicio.")
+
+    # Validar que haya recibido el costo
+    if not "costo" in datos:
+        abort(400, "No se pudo obtener el costo del trámite o servicio.")
 
     # Entregar el formulario para ingresar datos personales
     form.clave.data = clave
@@ -126,8 +143,26 @@ def revisar(pag_pago_id_hasheado):
     except requests.exceptions.RequestException as error:
         abort(500, "Error desconocido con la API de pagos. " + str(error))
     datos = respuesta.json()
-    if not "pag_tramite_servicio_descripcion" in datos or not "email" in datos or not "total" in datos:
-        abort(500, "No se pudo consultar el pago.")
+
+    # Verificar que haya tenido exito
+    if not "success" in datos:
+        abort(400, "No se pudo consultar el carro de pagos.")
+    if not datos["success"]:
+        if "message" in datos:
+            abort(400, datos["message"])
+        abort(400, "No se pudo consultar el carro de pagos.")
+
+    # Validar que se haya recibido la descripcion
+    if not "pag_tramite_servicio_descripcion" in datos:
+        abort(400, "No se pudo obtener la descripción del trámite o servicio.")
+
+    # Validar que se haya recibido el email
+    if not "email" in datos:
+        abort(400, "No se pudo obtener el email.")
+
+    # Validar que se haya recibido el total
+    if not "total" in datos:
+        abort(400, "No se pudo obtener el total.")
 
     # Entregar la pagina para revisar, con el boton para ir al banco
     form = RevisarForm()
