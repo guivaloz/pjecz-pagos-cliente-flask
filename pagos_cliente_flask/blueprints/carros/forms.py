@@ -43,11 +43,3 @@ class IngresarForm(FlaskForm):
         validators=[DataRequired()],
     )
     continuar = SubmitField("Continuar")
-
-
-class RevisarForm(FlaskForm):
-    """Formulario para revisar antes de ir al banco"""
-
-    descripcion = StringField("Trámite o servicio")
-    email = EmailField("Email")
-    total = StringField("Total")
