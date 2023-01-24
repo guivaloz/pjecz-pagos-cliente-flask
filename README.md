@@ -21,8 +21,8 @@ Crear archivo `.env` con
     SECRET_KEY=XXXXXXXXXXXXXXXXXXXXXXXX
 
     # reCAPTCHA configuration
-    RECAPTCHA_PUBLIC_KEY = os.environ.get("RECAPTCHA_PUBLIC_KEY", "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx")
-    RECAPTCHA_PRIVATE_KEY = os.environ.get("RECAPTCHA_PRIVATE_KEY" "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx")
+    RECAPTCHA_PUBLIC_KEY = XXXXXXXXXXXXXXXXXXXXXXXX
+    RECAPTCHA_PRIVATE_KEY = XXXXXXXXXXXXXXXXXXXXXXXX
 
 Crear archivo `.bashrc` que arranque el entorno virtual y cargue las variables
 
@@ -54,10 +54,10 @@ Crear archivo `.bashrc` que arranque el entorno virtual y cargue las variables
         echo
     fi
 
-    if [ -d venv ]
+    if [ -d .venv ]
     then
         echo "-- Python Virtual Environment"
-        source venv/bin/activate
+        source .venv/bin/activate
         echo "   $(python3 --version)"
         export PYTHONPATH=$(pwd)
         echo "   PYTHONPATH: ${PYTHONPATH}"
@@ -71,6 +71,39 @@ Crear archivo `.bashrc` que arranque el entorno virtual y cargue las variables
     if [ -f app.yaml ]
     then
         echo "-- Subir a Google Cloud"
+        echo "   poetry export -f requirements.txt --output requirements.txt --without-hashes"
         echo "   gcloud app deploy"
         echo
     fi
+
+## Instalacion
+
+Crear entorno virtual con Python 3.10
+
+    python3.10 -m venv .venv
+
+Activar entorno virtual
+
+    source .venv/bin/activate
+
+Actualizar pip de ser necesario
+
+    pip install --upgrade pip
+
+Instalar Poetry para manejar dependencias
+
+    pip install poetry
+
+Instalar dependencias
+
+    poetry install
+
+## Ejecucion
+
+Arrancar Flask
+
+    flask run --port=5000
+
+O con el alias
+
+    arrancar

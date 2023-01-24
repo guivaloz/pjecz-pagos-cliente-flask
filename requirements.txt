@@ -1,9 +1,0 @@
-black
-Flask
-Flask-WTF
-hashids
-Jinja2
-pylint
-python-dotenv
-requests
-Unidecode

@@ -5,5 +5,7 @@
 .~lock.*
 *.py[cod]
 __pycache__/
+/.venv/
 /venv/
-/pagos_cliente_flask/static/images/
+/app.yaml
+/requirements.txt

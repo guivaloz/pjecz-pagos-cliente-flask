@@ -12,6 +12,7 @@
 __pycache__/
 /.git
 /.github
+/.venv
 /.vscode
 /pyproject.toml
 /tests
