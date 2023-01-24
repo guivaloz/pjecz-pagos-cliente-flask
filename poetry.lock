@@ -248,18 +248,6 @@ spelling = ["pyenchant (>=3.2,<4.0)"]
 testutils = ["gitpython (>3)"]
 
 [[package]]
-name = "pylint-sqlalchemy"
-version = "0.2.0"
-description = "pylint plugin to fix incompatibility issues with sqlalchemy"
-category = "dev"
-optional = false
-python-versions = "*"
-
-[package.dependencies]
-astroid = ">=1.5"
-pylint = ">=1.6"
-
-[[package]]
 name = "python-dotenv"
 version = "0.21.1"
 description = "Read key-value pairs from a .env file and set them as environment variables"
@@ -372,7 +360,7 @@ email = ["email-validator"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.10"
-content-hash = "f21c82a2004ce51329ab8a45f070d2f235f9cb7de40951fdf1baae1105fc0111"
+content-hash = "6c575d2cd0da4c127d09a4d6565ec31251461be44864b61f7cdf48fa0420faa7"
 
 [metadata.files]
 astroid = [
@@ -636,10 +624,6 @@ platformdirs = [
 pylint = [
     {file = "pylint-2.15.10-py3-none-any.whl", hash = "sha256:9df0d07e8948a1c3ffa3b6e2d7e6e63d9fb457c5da5b961ed63106594780cc7e"},
     {file = "pylint-2.15.10.tar.gz", hash = "sha256:b3dc5ef7d33858f297ac0d06cc73862f01e4f2e74025ec3eff347ce0bc60baf5"},
-]
-pylint-sqlalchemy = [
-    {file = "pylint-sqlalchemy-0.2.0.tar.gz", hash = "sha256:aaf6cb96ac66467d26c92b3ef70bd70d9af201c1066c45b9e690961e7edc8282"},
-    {file = "pylint_sqlalchemy-0.2.0-py2.py3-none-any.whl", hash = "sha256:e5872c5e345f958e24fd6accca25ef8c54066158ecdd4666f587ce27bddd3a17"},
 ]
 python-dotenv = [
     {file = "python-dotenv-0.21.1.tar.gz", hash = "sha256:1c93de8f636cde3ce377292818d0e440b6e45a82f215c3744979151fa8151c49"},
