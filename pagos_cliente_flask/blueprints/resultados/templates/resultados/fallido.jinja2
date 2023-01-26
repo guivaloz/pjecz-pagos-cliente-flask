@@ -15,6 +15,11 @@
                         El servicio bancario ha infomado que no pudo hacer la operación.
                         Revise la información de su cuenta y repita el proceso si así lo desea.
                     </p>
+                    {% if mensaje != '' %}
+                        <p class="lead mb-4">
+                            {{ mensaje }}
+                        </p>
+                    {% endif %}
                     {% if folio != '' %}
                         <p class="lead mb-4">
                             Folio reportado por la institución financiera: <strong>{{ folio }}</strong>

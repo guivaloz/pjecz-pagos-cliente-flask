@@ -75,21 +75,21 @@ def procesar_lo_que_viene_del_banco():
     if not datos["success"]:
         if "message" in datos:
             logging.error(datos["message"])
-            abort(400, datos["message"])
+            return redirect(url_for("resultados.resultado_fallido", mensaje=datos["message"]))
         logging.error(mensaje_error)
-        abort(400, mensaje_error)
+        return redirect(url_for("resultados.resultado_fallido", mensaje=mensaje_error))
 
     # Validar que haya recibido el estado
     mensaje_error = "No se pudo obtener el estado del pago."
     if not "estado" in datos:
         logging.error(mensaje_error)
-        abort(400, mensaje_error)
+        return redirect(url_for("resultados.resultado_fallido", mensaje=mensaje_error))
 
     # Validar que haya recibido el folio
     mensaje_error = "No se pudo obtener el folio del pago."
     if not "folio" in datos:
         logging.error(mensaje_error)
-        abort(400, mensaje_error)
+        return redirect(url_for("resultados.resultado_fallido", mensaje=mensaje_error))
 
     # Redirigir a la página de resultado PAGADO
     if datos["estado"] == "PAGADO":

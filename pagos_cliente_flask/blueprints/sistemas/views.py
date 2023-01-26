@@ -15,7 +15,7 @@ def start():
 @sistemas.app_errorhandler(400)
 def bad_request(error):
     """Solicitud errónea"""
-    return render_template("sistemas/400.jinja2", error=error), 403
+    return render_template("sistemas/400.jinja2", error=error), 400
 
 
 @sistemas.app_errorhandler(403)
