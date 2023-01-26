@@ -1,11 +1,23 @@
 """
 Resultados, vistas
 """
+import logging  # Imports Python standard library logging
+
 from flask import abort, Blueprint, render_template, request, redirect, url_for
+import google.cloud.logging  # Imports the Cloud Logging client library
 import requests
 
 from pagos_cliente_flask.extensions import csrf
 from config.settings import API_BASE_URL, API_TIMEOUT
+
+# Instantiates a client
+client = google.cloud.logging.Client()
+
+# Retrieves a Cloud Logging handler based on the environment
+# you're running in and integrates the handler with the
+# Python logging module. By default this captures all logs
+# at INFO level and higher
+client.setup_logging()
 
 resultados = Blueprint("resultados", __name__, template_folder="templates")
 
@@ -14,13 +26,16 @@ resultados = Blueprint("resultados", __name__, template_folder="templates")
 @csrf.exempt
 def procesar_lo_que_viene_del_banco():
     """Procesar lo que viene del banco"""
-    # pendiente
 
     # Si no viene el payload del banco por POST
     if not request.form:
-        abort(400, "No se ha proporcionado el payload del banco.")
+        mensaje_error = "No se recibió el payload del banco."
+        logging.warning(mensaje_error)
+        abort(400, mensaje_error)
     if request.form["strResponse"] == "":
-        abort(400, "No se ha proporcionado el payload del banco.")
+        mensaje_error = "Es una cadena de texto vacia el payload del banco."
+        logging.warning(mensaje_error)
+        abort(400, mensaje_error)
 
     # Preparar el cuerpo a enviar a la API "/pag_pagos/resultado"
     request_body = {
@@ -35,30 +50,46 @@ def procesar_lo_que_viene_del_banco():
             timeout=API_TIMEOUT,
         )
     except requests.exceptions.ConnectionError as error:
-        abort(500, "No se pudo conectar con la API de pagos. " + str(error))
+        mensaje_error = "No se pudo conectar con la API de pagos. " + str(error)
+        logging.error(mensaje_error)
+        abort(500, mensaje_error)
     except requests.exceptions.Timeout as error:
-        abort(500, "Tiempo de espera agotado al conectar con la API de pagos. " + str(error))
+        mensaje_error = "Tiempo de espera agotado al conectar con la API de pagos. " + str(error)
+        logging.error(mensaje_error)
+        abort(500, mensaje_error)
     except requests.exceptions.HTTPError as error:
-        abort(500, "Error HTTP porque la API de pagos arrojó un problema: " + str(error))
+        mensaje_error = "Error HTTP porque la API de pagos arrojó un problema: " + str(error)
+        logging.error(mensaje_error)
+        abort(500, mensaje_error)
     except requests.exceptions.RequestException as error:
-        abort(500, "Error desconocido con la API de pagos. " + str(error))
+        mensaje_error = "Error desconocido con la API de pagos. " + str(error)
+        logging.error(mensaje_error)
+        abort(500, mensaje_error)
     datos = respuesta.json()
 
     # Verificar que haya tenido exito
+    mensaje_error = "No se pudo actualizar el carro de pagos."
     if not "success" in datos:
-        abort(400, "No se pudo actualizar el carro de pagos.")
+        logging.error(mensaje_error)
+        abort(400, mensaje_error)
     if not datos["success"]:
         if "message" in datos:
+            logging.error(datos["message"])
             abort(400, datos["message"])
-        abort(400, "No se pudo actualizar el carro de pagos.")
+        logging.error(mensaje_error)
+        abort(400, mensaje_error)
 
     # Validar que haya recibido el estado
+    mensaje_error = "No se pudo obtener el estado del pago."
     if not "estado" in datos:
-        abort(400, "No se pudo obtener el estado del pago.")
+        logging.error(mensaje_error)
+        abort(400, mensaje_error)
 
     # Validar que haya recibido el folio
+    mensaje_error = "No se pudo obtener el folio del pago."
     if not "folio" in datos:
-        abort(400, "No se pudo obtener el folio del pago.")
+        logging.error(mensaje_error)
+        abort(400, mensaje_error)
 
     # Redirigir a la página de resultado PAGADO
     if datos["estado"] == "PAGADO":
