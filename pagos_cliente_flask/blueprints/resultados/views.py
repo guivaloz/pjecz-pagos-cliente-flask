@@ -68,14 +68,16 @@ def procesar_lo_que_viene_del_banco():
     datos = respuesta.json()
 
     # Verificar que haya tenido exito
-    mensaje_error = "No se pudo actualizar el carro de pagos."
     if not "success" in datos:
+        mensaje_error = "Error porque la API de pagos no entregó el resultado."
         logging.error(mensaje_error)
-        abort(400, mensaje_error)
+        abort(500, mensaje_error)
     if not datos["success"]:
         if "message" in datos:
-            logging.error(datos["message"])
-            return redirect(url_for("resultados.resultado_fallido", mensaje=datos["message"]))
+            mensaje_error = datos["message"]
+            logging.error(mensaje_error)
+            return redirect(url_for("resultados.resultado_fallido", mensaje=mensaje_error))
+        mensaje_error = "No se pudo actualizar el carro de pagos por un erreor desconocido."
         logging.error(mensaje_error)
         return redirect(url_for("resultados.resultado_fallido", mensaje=mensaje_error))
 
@@ -121,5 +123,10 @@ def resultado_fallido():
     if folio is None:
         folio = ""
 
+    # Si viene el mensaje
+    mensaje = request.args.get("mensaje")
+    if mensaje is None:
+        mensaje = ""
+
     # Entregar
-    return render_template("resultados/fallido.jinja2", folio=folio)
+    return render_template("resultados/fallido.jinja2", folio=folio, mensaje=mensaje)
