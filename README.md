@@ -2,7 +2,11 @@
 
 Cliente del Portal de Pagos hecho con Flask.
 
-## Configuracion
+## Configurar
+
+Genere el `SECRET_KEY` con este comando
+
+    openssl rand -hex 32
 
 Crear archivo `.env` con
 
@@ -21,8 +25,8 @@ Crear archivo `.env` con
     SECRET_KEY=XXXXXXXXXXXXXXXXXXXXXXXX
 
     # reCAPTCHA configuration
-    RECAPTCHA_PUBLIC_KEY = XXXXXXXXXXXXXXXXXXXXXXXX
-    RECAPTCHA_PRIVATE_KEY = XXXXXXXXXXXXXXXXXXXXXXXX
+    RECAPTCHA_PUBLIC_KEY=XXXXXXXXXXXXXXXXXXXXXXXX
+    RECAPTCHA_PRIVATE_KEY=XXXXXXXXXXXXXXXXXXXXXXXX
 
 Crear archivo `.bashrc` que arranque el entorno virtual y cargue las variables
 
@@ -76,7 +80,20 @@ Crear archivo `.bashrc` que arranque el entorno virtual y cargue las variables
         echo
     fi
 
-## Instalacion
+## Configurar Poetry
+
+Por defecto, el entorno se guarda en un directorio unico en `~/.cache/pypoetry/virtualenvs`
+
+Modifique para que el entorno se guarde en el mismo directorio que el proyecto
+
+    poetry config --list
+    poetry config virtualenvs.in-project true
+
+Verifique que este en True
+
+    poetry config virtualenvs.in-project
+
+## Instalar
 
 Crear entorno virtual con Python 3.10
 
@@ -98,12 +115,36 @@ Instalar dependencias
 
     poetry install
 
-## Ejecucion
+## Arrancar
 
-Arrancar Flask
+Ejecutar Flask con el alias arrancar
 
-    flask run --port=5000
-
-O con el alias
-
+    . .bashrc
     arrancar
+
+## Google Cloud deployment
+
+Crear el archivo `app.yaml` con las variables para producción
+
+    runtime: python310
+    instance_class: F2
+    service: pagos-cliente
+    env_variables:
+      API_BASE_URL: "https://citas-api-oauth2.justiciadigital.gob.mx/v3"
+      API_TIMEOUT: 24
+      FLASK_APP: pagos_cliente_flask/app.py
+      FLASK_DEBUG: 0
+      SALT: XXXXXXXXXXXXXXXXXXXXXXXX
+      SECRET_KEY: XXXXXXXXXXXXXXXXXXXXXXXX
+      RECAPTCHA_PUBLIC_KEY: "XXXXXXXXXXXXXXXXXXXXXXXX"
+      RECAPTCHA_PRIVATE_KEY: "XXXXXXXXXXXXXXXXXXXXXXXX"
+    vpc_access_connector:
+      name: projects/justicia-digital-gob-mx/locations/us-west2/connectors/cupido
+
+Crear el archivo `requirements.txt`
+
+    poetry export -f requirements.txt --output requirements.txt --without-hashes
+
+Y subir a Google Cloud con
+
+    gcloud app deploy
