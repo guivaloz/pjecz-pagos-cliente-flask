@@ -28,15 +28,16 @@
                     <div class="row">
                         <div class="col-md-12">
                             <label>Total a pagar</label>
-                            <input type="text" readonly value="{{ total }}" class="form-control">
+                            <input type="text" readonly value="$ {{'%0.2f'|format(total|float)}}" class="form-control">
                         </div>
                     </div>
                     <br>
                     {% if url != '' %}
                         <div class="row">
-                            <p class="observacion">Al dar clic en el botón Continuar será redirigido al banco</p>
+                            <p class="observacion">Al dar clic en el botón Continuar se mostrará una ventana emergente del Banco</p>
                             <div class="col-md-12 text-center">
-                                <a class='btn btn-azul' href="{{url}}">Realizar Pago</a>
+                                <!--a class='btn btn-azul' href="{{url}}">Realizar Pago</a-->
+                                <a class="btn btn-azul"  data-bs-toggle="modal" data-bs-target="#bancoModal">Continuar</a>
                             </div>
                         </div>
                     {% endif %}
@@ -44,7 +45,31 @@
             </div>
         </div>
     </div>
+
+    
+    <!-- Modal -->
+    <div class="modal fade" id="bancoModal" tabindex="-1" aria-labelledby="bancoModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="consultarTransaccion()"></button>
+            </div>
+            <div class="modal-body">
+                <iframe src="{{ url }}" width="450" height="600"></iframe>  
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+    </div>
+
 {% endblock %}
 
 {% block custom_javascript %}
+    <script>
+        function consultarTransaccion(){
+            window.location.href = 'https://pagos.justiciadigital.gob.mx/carro/{{ pag_pago_id_hasheado }}' ;
+        }
+    </script>
 {% endblock %}
+

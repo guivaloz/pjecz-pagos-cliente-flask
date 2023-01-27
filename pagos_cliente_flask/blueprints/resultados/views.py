@@ -92,3 +92,11 @@ def resultado_fallido():
 
     # Entregar
     return render_template("resultados/fallido.jinja2", folio=folio)
+
+
+@resultados.route("/resultado/abortado", methods=["GET", "POST"])
+def resultado_abortado():
+    """Resultado abortado"""
+
+    # Entregar
+    return render_template("resultados/abortado.jinja2")

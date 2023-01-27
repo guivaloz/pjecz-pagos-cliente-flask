@@ -1,0 +1,30 @@
+{% extends "layouts/app.jinja2" %}
+
+{% block title %}Lamentablemente la operacion bancaria fue cancelada{% endblock %}
+
+{% block content %}
+    <div class="row justify-content-md-center m-5">
+        <div class="col-md-8">
+            <div class="card">
+                <img class="card-img-top" src="https://storage.googleapis.com/pjecz-informatica/static/images/pagos-resultado-abortado.gif" alt="Operación de pago cancelada">
+                <div class="card-body">
+                    <h4>
+                        Operación de pago cancelda
+                    </h4>
+                    <p class="lead mb-4">
+                        La operación de realizar el pago la ha cancelado y no se ha generado ningun cargo a su tarjeta, repita el proceso si así lo desea.
+                    </p>
+                    <p class="lead mb-4">
+                        Gracias por usar el Portal de Pagos.
+                    </p>
+                    <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
+                        <button type="button" class="btn btn-outline-secondary btn-lg px-4">Ir a Trámites y Servicios en PJECZ.gob.mx</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block custom_javascript %}
+{% endblock %}
