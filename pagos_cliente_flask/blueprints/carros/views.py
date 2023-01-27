@@ -166,6 +166,10 @@ def revisar(pag_pago_id_hasheado):
     if not "estado" in datos:
         abort(400, "No se recibió el estado del pago.")
 
+    # Si el estado es SOLICITADO
+    if datos["estado"] == "SOLICITADO" and url == "":
+        return redirect(url_for("resultados.resultado_abortado"))
+
     # Si el estado es PAGADO, redireccionar a la página de pago exitoso
     if datos["estado"] == "PAGADO":
         return redirect(url_for("resultados.resultado_pagado", folio=datos["folio"]))

@@ -9,3 +9,4 @@ __pycache__/
 /venv/
 /app.yaml
 /requirements.txt
+pagos_cliente_flask/static/img/abortado.gif
