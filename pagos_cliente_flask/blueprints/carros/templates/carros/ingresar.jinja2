@@ -13,7 +13,7 @@
                 <div class="card-body">
                     <div class="col-md-12 tramite p-2 rounded">
                         <h4>{{ descripcion }}</h4>
-                        <p>Costo: <strong>$ {{ costo }}</strong></p>    
+                        <p>Costo: <strong>$ {{ costo }}</strong></p>
                     </div>
                     <br>
                     <h5>Registre sus datos para realizar el pago</h5>
@@ -47,20 +47,18 @@
                                 {% call f.form_group(form.recaptcha) %}{% endcall %}
                             </div>
                         </div>
-                        
-                        {% call f.form_group(form.aceptar) %}{% endcall %}
+                        {# call f.form_group(form.aceptar) #}{# endcall #}
                         <div class="row">
                             <div class="col-md-12 text-center">
                                 {% call f.form_group(form.continuar) %}{% endcall %}
                             </div>
                         </div>
-                        
                     {% endcall %}
                 </div>
-            </div>    
+            </div>
         </div>
-    </div> 
-    {% endblock %}
+    </div>
+{% endblock %}
 
 {% block custom_javascript %}
     <!-- reCaptcha Integration -->

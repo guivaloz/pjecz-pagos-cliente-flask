@@ -150,35 +150,50 @@ def revisar(pag_pago_id_hasheado):
             abort(400, datos["message"])
         abort(400, "No se pudo consultar el carro de pagos.")
 
-    # Validar que se haya recibido la descripcion
-    if not "pag_tramite_servicio_descripcion" in datos:
-        abort(400, "No se recibió la descripción del trámite o servicio.")
+    # Validar que se haya recibido el email
+    if not "cit_cliente_nombre" in datos:
+        abort(400, "No se recibió el nombre.")
 
     # Validar que se haya recibido el email
     if not "email" in datos:
         abort(400, "No se recibió el email.")
 
     # Validar que se haya recibido el total
-    if not "total" in datos:
-        abort(400, "No se recibió el total.")
-
-    # Validar que se haya recibido el total
     if not "estado" in datos:
         abort(400, "No se recibió el estado del pago.")
 
-    # Si el estado es SOLICITADO
-    if datos["estado"] == "SOLICITADO" and url == "":
+    # Validar que se haya recibido la descripcion
+    if not "folio" in datos:
+        abort(400, "No se recibió el folio.")
+
+    # Validar que se haya recibido la descripcion
+    if not "pag_tramite_servicio_descripcion" in datos:
+        abort(400, "No se recibió la descripción del trámite o servicio.")
+
+    # Validar que se haya recibido el total
+    if not "total" in datos:
+        abort(400, "No se recibió el total.")
+
+    # Si NO hay URL y el estado es SOLICITADO
+    if url == "" and datos["estado"] == "SOLICITADO":
         return redirect(url_for("resultados.resultado_abortado"))
 
-    # Si el estado es PAGADO, redireccionar a la página de pago exitoso
+    # Si el estado es PAGADO, mostrar el comprobante del pago
     if datos["estado"] == "PAGADO":
-        return redirect(url_for("resultados.resultado_pagado", folio=datos["folio"]))
+        return render_template(
+            "carros/comprobante.jinja2",
+            nombre=datos["cit_cliente_nombre"],
+            email=datos["email"],
+            folio=datos["folio"],
+            descripcion=datos["pag_tramite_servicio_descripcion"],
+            total=datos["total"],
+        )
 
     # Si el estado es FALLIDO o CANCELADO, redireccionar a la página de pago fallido
     if datos["estado"] == "FALLIDO" or datos["estado"] == "CANCELADO":
         return redirect(url_for("resultados.resultado_fallido", folio=datos["folio"]))
 
-    # Entregar la pagina para revisar, con el boton para ir al banco
+    # Como se tiene el URL, entregar la pagina para revisar, con el boton para ir al banco
     return render_template(
         "carros/revisar.jinja2",
         descripcion=datos["pag_tramite_servicio_descripcion"],

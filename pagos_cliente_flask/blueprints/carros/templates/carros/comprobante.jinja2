@@ -1,0 +1,54 @@
+{% extends "layouts/app.jinja2" %}
+
+{% block title %}Comprobante de pago{% endblock %}
+
+{% block content %}
+    <div class="row m-5 justify-content-md-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h3>Comprobante de pago</h3>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <label>Nombre</label>
+                            <input type="text" readonly value="{{ nombre }}" class="form-control">
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <label>Correo Electrónico</label>
+                            <input type="text" readonly value="{{ email }}" class="form-control">
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <label>Folio</label>
+                            <input type="text" readonly value="{{ folio }}" class="form-control">
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <label>Trámite o servicio</label>
+                            <input type="text" readonly value="{{ descripcion }}" class="form-control">
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <label>Total</label>
+                            <input type="text" readonly value="$ {{'%0.2f'|format(total|float)}}" class="form-control">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block custom_javascript %}
+{% endblock %}
