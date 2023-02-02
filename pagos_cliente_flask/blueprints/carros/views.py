@@ -192,6 +192,7 @@ def revisar(pag_pago_id_hasheado):
             descripcion=datos["pag_tramite_servicio_descripcion"],
             total=datos["total"],
             respuesta_tiempo=datos["respuesta_tiempo"],
+            comprobante_url=url_for("carros.revisar", pag_pago_id_hasheado=pag_pago_id_hasheado),
         )
 
     # Si el estado es FALLIDO o CANCELADO, redireccionar a la página de pago fallido
