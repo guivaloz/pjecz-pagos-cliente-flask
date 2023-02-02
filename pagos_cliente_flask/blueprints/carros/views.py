@@ -174,6 +174,10 @@ def revisar(pag_pago_id_hasheado):
     if not "total" in datos:
         abort(400, "No se recibió el total.")
 
+    # Validar que se haya recibido la respuesta_tiempo
+    if not "respuesta_tiempo" in datos:
+        abort(400, "No se recibió el tiempo de la respuesta.")
+
     # Si NO hay URL y el estado es SOLICITADO
     if url == "" and datos["estado"] == "SOLICITADO":
         return redirect(url_for("resultados.resultado_abortado"))
@@ -187,6 +191,7 @@ def revisar(pag_pago_id_hasheado):
             folio=datos["folio"],
             descripcion=datos["pag_tramite_servicio_descripcion"],
             total=datos["total"],
+            respuesta_tiempo=datos["respuesta_tiempo"],
         )
 
     # Si el estado es FALLIDO o CANCELADO, redireccionar a la página de pago fallido
