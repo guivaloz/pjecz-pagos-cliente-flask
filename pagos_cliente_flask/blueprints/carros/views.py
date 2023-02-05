@@ -4,7 +4,7 @@ Carros, vistas
 from flask import abort, Blueprint, render_template, redirect, request, url_for
 import requests
 
-from config.settings import API_BASE_URL, API_TIMEOUT
+from config.settings import API_BASE_URL, API_TIMEOUT, BASE_URL
 from lib.safe_string import safe_clave, safe_email, safe_string
 from lib.hashids import cifrar_id, descifrar_id
 
@@ -192,7 +192,7 @@ def revisar(pag_pago_id_hasheado):
             descripcion=datos["pag_tramite_servicio_descripcion"],
             total=datos["total"],
             respuesta_tiempo=datos["respuesta_tiempo"],
-            comprobante_url=url_for("carros.revisar", pag_pago_id_hasheado=pag_pago_id_hasheado),
+            comprobante_url=BASE_URL + url_for("carros.revisar", pag_pago_id_hasheado=pag_pago_id_hasheado),
         )
 
     # Si el estado es FALLIDO o CANCELADO, redireccionar a la página de pago fallido
