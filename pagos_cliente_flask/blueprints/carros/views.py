@@ -174,9 +174,9 @@ def revisar(pag_pago_id_hasheado):
     if not "total" in datos:
         abort(400, "No se recibió el total.")
 
-    # Validar que se haya recibido la respuesta_tiempo
-    if not "respuesta_tiempo" in datos:
-        abort(400, "No se recibió el tiempo de la respuesta.")
+    # Validar que se haya recibido la resultado_tiempo
+    if not "resultado_tiempo" in datos:
+        abort(400, "No se recibió la fecha y hora del resultado de la operación bancaria.")
 
     # Si NO hay URL y el estado es SOLICITADO
     if url == "" and datos["estado"] == "SOLICITADO":
@@ -191,7 +191,7 @@ def revisar(pag_pago_id_hasheado):
             folio=datos["folio"],
             descripcion=datos["pag_tramite_servicio_descripcion"],
             total=datos["total"],
-            respuesta_tiempo=datos["respuesta_tiempo"],
+            resultado_tiempo=datos["resultado_tiempo"],
             comprobante_url=BASE_URL + url_for("carros.revisar", pag_pago_id_hasheado=pag_pago_id_hasheado),
         )
 
