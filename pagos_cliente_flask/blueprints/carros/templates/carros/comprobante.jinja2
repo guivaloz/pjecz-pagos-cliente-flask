@@ -45,13 +45,15 @@
                         </div>
                     </div>
                     <br>
+                    {% if resultado_tiempo %}
                     <div class="row">
                         <div class="col-md-12">
                             <label>Fecha y hora del pago</label>
-                            <input type="text" readonly value="{{ respuesta_tiempo }}" class="form-control">
+                            <input type="text" readonly value="{{ resultado_tiempo }}" class="form-control">
                         </div>
                     </div>
                     <br>
+                    {% endif %}
                     <div class="row">
                         <div class="col-md-12">
                             <label>Código QR para validar</label>

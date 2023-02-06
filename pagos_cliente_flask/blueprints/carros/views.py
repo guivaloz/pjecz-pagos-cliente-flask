@@ -4,7 +4,7 @@ Carros, vistas
 from flask import abort, Blueprint, render_template, redirect, request, url_for
 import requests
 
-from config.settings import API_BASE_URL, API_TIMEOUT
+from config.settings import API_BASE_URL, API_TIMEOUT, BASE_URL
 from lib.safe_string import safe_clave, safe_email, safe_string
 from lib.hashids import cifrar_id, descifrar_id
 
@@ -174,9 +174,9 @@ def revisar(pag_pago_id_hasheado):
     if not "total" in datos:
         abort(400, "No se recibió el total.")
 
-    # Validar que se haya recibido la respuesta_tiempo
-    if not "respuesta_tiempo" in datos:
-        abort(400, "No se recibió el tiempo de la respuesta.")
+    # Validar que se haya recibido la resultado_tiempo
+    if not "resultado_tiempo" in datos:
+        abort(400, "No se recibió la fecha y hora del resultado de la operación bancaria.")
 
     # Si NO hay URL y el estado es SOLICITADO
     if url == "" and datos["estado"] == "SOLICITADO":
@@ -191,8 +191,8 @@ def revisar(pag_pago_id_hasheado):
             folio=datos["folio"],
             descripcion=datos["pag_tramite_servicio_descripcion"],
             total=datos["total"],
-            respuesta_tiempo=datos["respuesta_tiempo"],
-            comprobante_url=url_for("carros.revisar", pag_pago_id_hasheado=pag_pago_id_hasheado),
+            resultado_tiempo=datos["resultado_tiempo"],
+            comprobante_url=BASE_URL + url_for("carros.revisar", pag_pago_id_hasheado=pag_pago_id_hasheado),
         )
 
     # Si el estado es FALLIDO o CANCELADO, redireccionar a la página de pago fallido

@@ -14,6 +14,9 @@ Crear archivo `.env` con
     API_BASE_URL="http://localhost:8000/v3"
     API_TIMEOUT=12
 
+    # Base URL
+    BASE_URL="http://localhost:5000"
+
     # Flask
     FLASK_APP=pagos_cliente_flask.app
     FLASK_DEBUG=1
@@ -130,8 +133,9 @@ Crear el archivo `app.yaml` con las variables para producción
     instance_class: F2
     service: pagos-cliente
     env_variables:
-      API_BASE_URL: "https://citas-api-oauth2.justiciadigital.gob.mx/v3"
+      API_BASE_URL: "https://api.justiciadigital.gob.mx/v3"
       API_TIMEOUT: 24
+      BASE_URL: "https://pagos.justiciadigital.gob.mx"
       FLASK_APP: pagos_cliente_flask/app.py
       FLASK_DEBUG: 0
       SALT: XXXXXXXXXXXXXXXXXXXXXXXX
