@@ -34,7 +34,7 @@
                     <div class="row">
                         <div class="col-md-12">
                             <label>Trámite o servicio</label>
-                            <input type="text" readonly value="{{ descripcion }}" class="form-control">
+                            <textarea type="text" readonly class="form-control" rows="4">{{ descripcion }}</textarea>
                         </div>
                     </div>
                     <br>
@@ -45,15 +45,13 @@
                         </div>
                     </div>
                     <br>
-                    {% if resultado_tiempo %}
                     <div class="row">
                         <div class="col-md-12">
                             <label>Fecha y hora del pago</label>
-                            <input type="text" readonly value="{{ resultado_tiempo }}" class="form-control">
+                            <input id="resultadoTiempoInput" type="text" readonly value="" class="form-control">
                         </div>
                     </div>
                     <br>
-                    {% endif %}
                     <div class="row">
                         <div class="col-md-12">
                             <label>Código QR para validar</label>
@@ -67,4 +65,25 @@
 {% endblock %}
 
 {% block custom_javascript %}
+    <!-- jQuery -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.3/jquery.min.js" integrity="sha512-STof4xm1wgkfm7heWqFJVn58Hm3EtS31XFaagaa8VMReCXAkQnJZ+jEy8PCC/iT18dFy95WcExNHFTqLyp72eQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <!-- Moment.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js" integrity="sha512-qTXRIMyZIFb8iQcfjXWCO8+M5Tbc38Qi5WzdPOYZHIlZpzBHG3L3by84BBBOiRGiEb7KKtAOAs5qYdUiZiQNNQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/locale/es-mx.min.js" integrity="sha512-Qy4cmZ6v7vnVEc0cn/BIj9q15eB98do4hMvu8xtc/H+v+YYpdpDrB35flHS3NPLbZUpe1npSYY/u+Gi3UB61vw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <!-- Resultado tiempo puede venir en UTC o estar vacio -->
+    <script>
+        // Funcion para dar formato a resultado_tiempo
+        var resultado_tiempo = "{{ resultado_tiempo }}";
+        function resultadoTiempo() {
+            if (resultado_tiempo) {
+                var tiempo = moment(resultado_tiempo).utc().format('DD/MM/YYYY hh:mm:ss');
+                $('#resultadoTiempoInput').val(tiempo);
+            }
+        }
+        // Cuando se carga la página
+        $(document).ready(function() {
+            moment.locale('es-mx');
+            resultadoTiempo();
+        });
+    </script>
 {% endblock %}
