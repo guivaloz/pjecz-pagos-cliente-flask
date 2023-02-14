@@ -13,6 +13,7 @@
                 <div class="card-body">
                     <div class="col-md-12 tramite p-2 rounded">
                         <h4>{{ descripcion }}</h4>
+                        <p>Juzgado u oficina: <strong>{{ autoridad_descripcion }}</strong></p>
                         <p>Costo: <strong>$ {{ '%0.2f'|format(costo|float) }}</strong></p>
                     </div>
                     <br>

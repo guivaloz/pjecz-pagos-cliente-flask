@@ -5,7 +5,7 @@ from flask import abort, Blueprint, render_template, redirect, request, url_for
 import requests
 
 from config.settings import API_BASE_URL, API_TIMEOUT, BASE_URL
-from lib.safe_string import safe_clave, safe_email, safe_string
+from lib.safe_string import safe_clave, safe_email, safe_integer, safe_string
 from lib.hashids import cifrar_id, descifrar_id
 
 from .forms import IngresarForm
@@ -30,6 +30,8 @@ def ingresar():
             "email": safe_email(form.email.data),
             "telefono": safe_string(form.telefono.data),
             "pag_tramite_servicio_clave": safe_clave(form.clave.data),
+            "cantidad": safe_integer(form.cantidad.data, default="1"),
+            "autoridad_clave": safe_clave(form.autoridad_clave.data),
         }
 
         # Enviar al API, donde se creará el cliente de no existir y el pago
@@ -70,6 +72,12 @@ def ingresar():
     if clave == "":
         abort(400, "No se ha proporcionado la clave del trámite o servicio.")
 
+    # TODO: Tomar por GET la clave de la autoridad
+    autoridad_clave = safe_clave(request.args.get("autoridad_clave"))
+
+    # TODO: Tomar por GET la cantidad
+    cantidad = safe_integer(request.args.get("cantidad"), default="1")
+
     # Consultar tramite-servicio por su clave
     try:
         respuesta = requests.get(
@@ -86,6 +94,22 @@ def ingresar():
     except requests.exceptions.RequestException as error:
         abort(500, "Error desconocido con la API de pagos. " + str(error))
     datos = respuesta.json()
+
+    # Consultar la autoridad por su clave
+    try:
+        respuesta = requests.get(
+            f"{API_BASE_URL}/autoridades/{autoridad_clave}",
+            timeout=API_TIMEOUT,
+        )
+    except requests.exceptions.ConnectionError as error:
+        abort(500, "No se pudo conectar con la API de pagos. " + str(error))
+    except requests.exceptions.Timeout as error:
+        abort(500, "Tiempo de espera agotado al conectar con la API de pagos. " + str(error))
+    except requests.exceptions.HTTPError as error:
+        abort(500, "Error HTTP porque la API de pagos arrojó un problema: " + str(error))
+    except requests.exceptions.RequestException as error:
+        abort(500, "Error desconocido con la API de pagos. " + str(error))
+    autoridad_datos = respuesta.json()
 
     # Verificar que haya tenido exito
     if not "success" in datos:
@@ -104,10 +128,13 @@ def ingresar():
         abort(400, "No se pudo obtener el costo del trámite o servicio.")
 
     # Entregar el formulario para ingresar datos personales
+    form.cantidad.data = cantidad
     form.clave.data = clave
+    form.autoridad_clave.data = autoridad_clave
     return render_template(
         "carros/ingresar.jinja2",
         form=form,
+        autoridad_descripcion=autoridad_datos["descripcion"],
         descripcion=datos["descripcion"],
         costo=datos["costo"],
     )

@@ -14,7 +14,7 @@ Crear archivo `.env` con
     API_BASE_URL="http://localhost:8000/v3"
     API_TIMEOUT=12
 
-    # Base URL
+    # Base URL sirve para elaborar el vinculo al comprobante del pago
     BASE_URL="http://localhost:5000"
 
     # Flask

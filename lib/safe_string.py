@@ -63,3 +63,13 @@ def safe_string(input_str, max_len=250, do_unidecode=True, save_enie=False, to_u
     if max_len == 0:
         return final
     return (final[:max_len] + "...") if len(final) > max_len else final
+
+
+def safe_integer(input_str, default=1):
+    """Safe integer"""
+    if not isinstance(input_str, str):
+        return default
+    final = input_str.strip()
+    if re.match(r"^\d+$", final) is None:
+        return default
+    return int(final)
