@@ -29,8 +29,8 @@ def ingresar():
             "curp": safe_string(form.curp.data),
             "email": safe_email(form.email.data),
             "telefono": safe_string(form.telefono.data),
-            "pag_tramite_servicio_clave": safe_clave(form.clave.data),
             "cantidad": safe_integer(form.cantidad.data, default="1"),
+            "pag_tramite_servicio_clave": safe_clave(form.pag_tramite_servicio_clave.data),
             "autoridad_clave": safe_clave(form.autoridad_clave.data),
         }
 
@@ -67,21 +67,21 @@ def ingresar():
         # Redireccionar a la página de revisión
         return redirect(url_for("carros.revisar", pag_pago_id_hasheado=cifrar_id(int(datos["pag_pago_id"])), banco_url=datos["url"]))
 
+    # Tomar por GET la cantidad
+    cantidad = safe_integer(request.args.get("cantidad"), default="1")
+
     # Tomar por GET la clave del tramite y servicio
-    clave = safe_clave(request.args.get("clave"))
-    if clave == "":
+    pag_tramite_servicio_clave = safe_clave(request.args.get("clave"))
+    if pag_tramite_servicio_clave == "":
         abort(400, "No se ha proporcionado la clave del trámite o servicio.")
 
-    # TODO: Tomar por GET la clave de la autoridad
+    # Tomar por GET la clave de la autoridad
     autoridad_clave = safe_clave(request.args.get("autoridad_clave"))
-
-    # TODO: Tomar por GET la cantidad
-    cantidad = safe_integer(request.args.get("cantidad"), default="1")
 
     # Consultar tramite-servicio por su clave
     try:
         respuesta = requests.get(
-            f"{API_BASE_URL}/pag_tramites_servicios/{clave}",
+            f"{API_BASE_URL}/pag_tramites_servicios/{pag_tramite_servicio_clave}",
             timeout=API_TIMEOUT,
         )
         respuesta.raise_for_status()
@@ -95,22 +95,6 @@ def ingresar():
         abort(500, "Error desconocido con la API de pagos. " + str(error))
     datos = respuesta.json()
 
-    # Consultar la autoridad por su clave
-    try:
-        respuesta = requests.get(
-            f"{API_BASE_URL}/autoridades/{autoridad_clave}",
-            timeout=API_TIMEOUT,
-        )
-    except requests.exceptions.ConnectionError as error:
-        abort(500, "No se pudo conectar con la API de pagos. " + str(error))
-    except requests.exceptions.Timeout as error:
-        abort(500, "Tiempo de espera agotado al conectar con la API de pagos. " + str(error))
-    except requests.exceptions.HTTPError as error:
-        abort(500, "Error HTTP porque la API de pagos arrojó un problema: " + str(error))
-    except requests.exceptions.RequestException as error:
-        abort(500, "Error desconocido con la API de pagos. " + str(error))
-    autoridad_datos = respuesta.json()
-
     # Verificar que haya tenido exito
     if not "success" in datos:
         abort(400, "No se pudo consultar el trámite o servicio.")
@@ -118,6 +102,33 @@ def ingresar():
         if "message" in datos:
             abort(400, datos["message"])
         abort(400, "No se pudo consultar el trámite o servicio.")
+
+    # Si viene la clave de la autoridad
+    autoridad_descripcion = ""
+    if autoridad_clave != "":
+        # Consultar la autoridad por su clave
+        try:
+            respuesta = requests.get(
+                f"{API_BASE_URL}/autoridades/{autoridad_clave}",
+                timeout=API_TIMEOUT,
+            )
+        except requests.exceptions.ConnectionError as error:
+            abort(500, "No se pudo conectar con la API de autoridades. " + str(error))
+        except requests.exceptions.Timeout as error:
+            abort(500, "Tiempo de espera agotado al conectar con la API de autoridades. " + str(error))
+        except requests.exceptions.HTTPError as error:
+            abort(500, "Error HTTP porque la API de autoridades arrojó un problema: " + str(error))
+        except requests.exceptions.RequestException as error:
+            abort(500, "Error desconocido con la API de autoridades. " + str(error))
+        autoridad_datos = respuesta.json()
+        # Verificar que haya tenido exito
+        if not "success" in autoridad_datos:
+            abort(400, "No se pudo consultar la autoridad.")
+        if not autoridad_datos["success"]:
+            if "message" in autoridad_datos:
+                abort(400, autoridad_datos["message"])
+            abort(400, "No se pudo consultar la autoridad.")
+        autoridad_descripcion = autoridad_datos["descripcion"]
 
     # Validar que haya recibido la descripcion
     if not "descripcion" in datos:
@@ -129,12 +140,12 @@ def ingresar():
 
     # Entregar el formulario para ingresar datos personales
     form.cantidad.data = cantidad
-    form.clave.data = clave
+    form.pag_tramite_servicio_clave.data = pag_tramite_servicio_clave
     form.autoridad_clave.data = autoridad_clave
     return render_template(
         "carros/ingresar.jinja2",
         form=form,
-        autoridad_descripcion=autoridad_datos["descripcion"],
+        autoridad_descripcion=autoridad_descripcion,
         descripcion=datos["descripcion"],
         costo=datos["costo"],
     )

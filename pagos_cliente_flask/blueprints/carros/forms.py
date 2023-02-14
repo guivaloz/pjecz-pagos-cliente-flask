@@ -11,7 +11,7 @@ class IngresarForm(FlaskForm):
     """Formulario para ingresar datos personales"""
 
     cantidad = HiddenField("Cantidad")
-    clave = HiddenField("Clave del trámite o servicio")
+    pag_tramite_servicio_clave = HiddenField("Clave del trámite o servicio")
     autoridad_clave = HiddenField("Clave de la autoridad")
     nombres = StringField(
         "Nombres",
