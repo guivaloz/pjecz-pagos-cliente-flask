@@ -104,7 +104,7 @@ def ingresar():
         abort(400, "No se pudo consultar el trámite o servicio.")
 
     # Si viene la clave de la autoridad
-    autoridad_descripcion = ""
+    autoridad_descripcion_corta = "NO DEFINIDO"
     if autoridad_clave != "":
         # Consultar la autoridad por su clave
         try:
@@ -128,7 +128,7 @@ def ingresar():
             if "message" in autoridad_datos:
                 abort(400, autoridad_datos["message"])
             abort(400, "No se pudo consultar la autoridad.")
-        autoridad_descripcion = autoridad_datos["descripcion"]
+        autoridad_descripcion_corta = autoridad_datos["descripcion_corta"]
 
     # Validar que haya recibido la descripcion
     if not "descripcion" in datos:
@@ -145,9 +145,10 @@ def ingresar():
     return render_template(
         "carros/ingresar.jinja2",
         form=form,
-        autoridad_descripcion=autoridad_descripcion,
-        descripcion=datos["descripcion"],
+        autoridad_descripcion_corta=autoridad_descripcion_corta,
+        cantidad=cantidad,
         costo=datos["costo"],
+        descripcion=datos["descripcion"],
     )
 
 
