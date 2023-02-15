@@ -10,7 +10,9 @@ from wtforms.validators import DataRequired, Length
 class IngresarForm(FlaskForm):
     """Formulario para ingresar datos personales"""
 
-    clave = HiddenField("Clave del trámite o servicio")
+    cantidad = HiddenField("Cantidad")
+    pag_tramite_servicio_clave = HiddenField("Clave del trámite o servicio")
+    autoridad_clave = HiddenField("Clave de la autoridad")
     nombres = StringField(
         "Nombres",
         validators=[DataRequired(), Length(min=3, max=64)],
