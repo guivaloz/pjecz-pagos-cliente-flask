@@ -29,7 +29,7 @@ def ingresar():
             "curp": safe_string(form.curp.data),
             "email": safe_email(form.email.data),
             "telefono": safe_string(form.telefono.data),
-            "cantidad": safe_integer(form.cantidad.data, default="1"),
+            "cantidad": safe_integer(form.cantidad.data, default=1),
             "pag_tramite_servicio_clave": safe_clave(form.pag_tramite_servicio_clave.data),
             "autoridad_clave": safe_clave(form.autoridad_clave.data),
         }
@@ -68,7 +68,7 @@ def ingresar():
         return redirect(url_for("carros.revisar", pag_pago_id_hasheado=cifrar_id(int(datos["pag_pago_id"])), banco_url=datos["url"]))
 
     # Tomar por GET la cantidad
-    cantidad = safe_integer(request.args.get("cantidad"), default="1")
+    cantidad = safe_integer(request.args.get("cantidad"), default=1)
 
     # Tomar por GET la clave del tramite y servicio
     pag_tramite_servicio_clave = safe_clave(request.args.get("clave"))
@@ -104,7 +104,8 @@ def ingresar():
         abort(400, "No se pudo consultar el trámite o servicio.")
 
     # Si viene la clave de la autoridad
-    autoridad_descripcion_corta = "NO DEFINIDO"
+    autoridad_descripcion = "NO DEFINIDO"
+    distrito_nombre = "NO DEFINIDO"
     if autoridad_clave != "":
         # Consultar la autoridad por su clave
         try:
@@ -128,7 +129,8 @@ def ingresar():
             if "message" in autoridad_datos:
                 abort(400, autoridad_datos["message"])
             abort(400, "No se pudo consultar la autoridad.")
-        autoridad_descripcion_corta = autoridad_datos["descripcion_corta"]
+        autoridad_descripcion = autoridad_datos["descripcion"]
+        distrito_nombre = autoridad_datos["distrito_nombre"]
 
     # Validar que haya recibido la descripcion
     if not "descripcion" in datos:
@@ -138,6 +140,13 @@ def ingresar():
     if not "costo" in datos:
         abort(400, "No se pudo obtener el costo del trámite o servicio.")
 
+    # Calcular el total
+    total = cantidad * datos["costo"]
+
+    # Validar que el total sea mayor a cero
+    if total <= 0:
+        abort(400, "El total debe ser mayor a cero.")
+
     # Entregar el formulario para ingresar datos personales
     form.cantidad.data = cantidad
     form.pag_tramite_servicio_clave.data = pag_tramite_servicio_clave
@@ -145,9 +154,10 @@ def ingresar():
     return render_template(
         "carros/ingresar.jinja2",
         form=form,
-        autoridad_descripcion_corta=autoridad_descripcion_corta,
+        autoridad_descripcion=autoridad_descripcion,
+        distrito_nombre=distrito_nombre,
         cantidad=cantidad,
-        costo=datos["costo"],
+        costo=total,
         descripcion=datos["descripcion"],
     )
 
