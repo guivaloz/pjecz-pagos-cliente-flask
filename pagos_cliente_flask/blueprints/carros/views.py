@@ -208,6 +208,10 @@ def revisar(pag_pago_id_hasheado):
         abort(400, "No se recibió el email.")
 
     # Validar que se haya recibido el total
+    if not "cantidad" in datos:
+        abort(400, "No se recibió la cantidad.")
+
+    # Validar que se haya recibido el total
     if not "estado" in datos:
         abort(400, "No se recibió el estado del pago.")
 
@@ -227,6 +231,14 @@ def revisar(pag_pago_id_hasheado):
     if not "resultado_tiempo" in datos:
         abort(400, "No se recibió la fecha y hora del resultado de la operación bancaria.")
 
+    # Validar que se haya recibido la descripcion de la autoridad
+    if not "autoridad_descripcion" in datos:
+        abort(400, "No se recibió la descripcion de la autoridad.")
+
+    # Validar que se haya recibido el nombre del distrito
+    if not "distrito_nombre" in datos:
+        abort(400, "No se recibió el nombre del distrito.")
+
     # Si NO hay URL y el estado es SOLICITADO
     if url == "" and datos["estado"] == "SOLICITADO":
         return redirect(url_for("resultados.resultado_abortado"))
@@ -235,13 +247,16 @@ def revisar(pag_pago_id_hasheado):
     if datos["estado"] == "PAGADO":
         return render_template(
             "carros/comprobante.jinja2",
-            nombre=datos["cit_cliente_nombre"],
+            autoridad=datos["autoridad_descripcion"],
+            cantidad=datos["cantidad"],
+            comprobante_url=BASE_URL + url_for("carros.revisar", pag_pago_id_hasheado=pag_pago_id_hasheado),
+            descripcion=datos["pag_tramite_servicio_descripcion"],
+            distrito=datos["distrito_nombre"],
             email=datos["email"],
             folio=datos["folio"],
-            descripcion=datos["pag_tramite_servicio_descripcion"],
-            total=datos["total"],
+            nombre=datos["cit_cliente_nombre"],
             resultado_tiempo=datos["resultado_tiempo"],
-            comprobante_url=BASE_URL + url_for("carros.revisar", pag_pago_id_hasheado=pag_pago_id_hasheado),
+            total=datos["total"],
         )
 
     # Si el estado es FALLIDO o CANCELADO, redireccionar a la página de pago fallido

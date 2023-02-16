@@ -26,8 +26,22 @@
                     <br>
                     <div class="row">
                         <div class="col-md-12">
-                            <label>Folio</label>
-                            <input type="text" readonly value="{{ folio }}" class="form-control">
+                            <label>Distrito</label>
+                            <input type="text" readonly value="{{ distrito }}" class="form-control">
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <label>Juzgado u oficina</label>
+                            <input type="text" readonly value="{{ autoridad }}" class="form-control">
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <label>Cantidad</label>
+                            <input type="text" readonly value="{{ cantidad }}" class="form-control">
                         </div>
                     </div>
                     <br>
@@ -42,6 +56,13 @@
                         <div class="col-md-12">
                             <label>Total</label>
                             <input type="text" readonly value="$ {{'%0.2f'|format(total|float)}}" class="form-control">
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <label>Folio</label>
+                            <input type="text" readonly value="{{ folio }}" class="form-control">
                         </div>
                     </div>
                     <br>
