@@ -19,7 +19,7 @@ def cifrar_id(un_id: int) -> str:
 def descifrar_id(un_id_hasheado: str) -> Any:
     """Descifrar ID"""
     if hashid_regexp.match(un_id_hasheado):
-        pag_pago_id = hashids.decode(un_id_hasheado)
-        if len(pag_pago_id) == 1:
-            return pag_pago_id[0]
+        un_id_descifrado = hashids.decode(un_id_hasheado)
+        if len(un_id_descifrado) == 1:
+            return un_id_descifrado[0]
     return None
