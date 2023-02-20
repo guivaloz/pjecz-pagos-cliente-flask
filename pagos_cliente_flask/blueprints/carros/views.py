@@ -60,12 +60,16 @@ def ingresar():
                 abort(400, datos["message"])
             abort(400, "No se pudo crear el carro para pagar.")
 
-        # Validar que haya recibido el id del pago
-        if not "pag_pago_id" in datos:
-            abort(400, "No se pudo obtener el id del pago.")
+        # Validar que haya recibido el id del pago hasheado
+        if not "id_hasheado" in datos:
+            abort(400, "No se pudo obtener el id del pago hasheado.")
+
+        # Validar que haya recibido el url
+        if not "url" in datos:
+            abort(400, "No se pudo obtener el URL.")
 
         # Redireccionar a la página de revisión
-        return redirect(url_for("carros.revisar", pag_pago_id_hasheado=cifrar_id(int(datos["pag_pago_id"])), banco_url=datos["url"]))
+        return redirect(url_for("carros.revisar", pag_pago_id_hasheado=datos["id_hasheado"], banco_url=datos["url"]))
 
     # Tomar por GET la cantidad
     cantidad = safe_integer(request.args.get("cantidad"), default=1)
