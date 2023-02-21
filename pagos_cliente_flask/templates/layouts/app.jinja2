@@ -6,7 +6,9 @@
 
 {% block main %}
     <nav class="navbar navbar-expand-lg navbar-light bg-light  p-3 sombra ">
-        <img src="https://storage.googleapis.com/pjecz-informatica/static/images/pagos-pjecz.png" style="width:300px" />
+        <a href="https://www.pjecz.gob.mx/tramites-y-servicios/">
+            <img src="https://storage.googleapis.com/pjecz-informatica/static/images/pagos-pjecz.png" style="width:300px" />
+        </a>
     </nav>
     <div class="container">
         <div class="row">
@@ -16,14 +18,11 @@
         </div>
     </div>
     <div class="container-fluid footer p-2 mt-3">
-        <div class="row justify-content-md-center">
-            <div class="col-md-4 text-center">
-                <ul class="nav nav-pills">
-                    <li class="nav-item"><a href="https://www.pjecz.gob.mx/tramites-y-servicios/" class="nav-link link-footer">Trámites y Servicios</a></li>
-                    <li class="nav-item"><a href="/aviso" class="nav-link link-footer">Aviso de Privacidad</a></li>
-                </ul>
-            </div>
-        </div>
+        <ul class="nav nav-pills justify-content-center">
+            <li class="nav-item"><a href="https://www.pjecz.gob.mx/tramites-y-servicios/" class="nav-link link-footer">Trámites y Servicios</a></li>
+            <li class="nav-item"><a href="/aviso" class="nav-link link-footer">Aviso de Privacidad</a></li>
+            <li class="nav-item"><a href="/preguntas_frecuentes" class="nav-link link-footer">Preguntas frecuentes</a></li>
+        </ul>
     </div>
 {% endblock %}
 
