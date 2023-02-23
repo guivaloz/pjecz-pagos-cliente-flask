@@ -6,7 +6,7 @@ import requests
 
 from config.settings import API_BASE_URL, API_TIMEOUT, BASE_URL
 from lib.safe_string import safe_clave, safe_email, safe_integer, safe_string
-from lib.hashids import cifrar_id, descifrar_id
+from lib.hashids import descifrar_id
 
 from .forms import IngresarForm
 
