@@ -14,9 +14,16 @@
                     <div class="col-md-12 tramite p-2 rounded">
                         <div class="row">
                             <div class="col-md-12">
-                                <h4 class="text-center">{{ descripcion }}</h4>
+                                <h4 class="text-center">{{ tramite_servicio_descripcion }}</h4>
                             </div>
                         </div>
+                        {% if descripcion %}
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <p class="text-center">{{ descripcion }}</p>
+                                </div>
+                            </div>
+                        {% endif %}
                         <div class="row">
                             <div class="col-md-4">
                                 Cantidad:
@@ -30,7 +37,7 @@
                                 Total a pagar:
                             </div>
                             <div class="col-md-8">
-                                $ {{ '%0.2f'|format(costo|float) }}
+                                $ {{ '%0.2f'|format(total|float) }}
                             </div>
                         </div>
                         <div class="row">

@@ -23,15 +23,17 @@ def ingresar():
 
         # Preparar el cuerpo a enviar a la API "/pag_pagos/carro"
         request_body = {
-            "nombres": safe_string(form.nombres.data, save_enie=True),
             "apellido_primero": safe_string(form.apellido_primero.data, save_enie=True),
             "apellido_segundo": safe_string(form.apellido_segundo.data, save_enie=True),
-            "curp": safe_string(form.curp.data),
-            "email": safe_email(form.email.data),
-            "telefono": safe_string(form.telefono.data),
-            "cantidad": safe_integer(form.cantidad.data, default=1),
-            "pag_tramite_servicio_clave": safe_clave(form.pag_tramite_servicio_clave.data),
             "autoridad_clave": safe_clave(form.autoridad_clave.data),
+            "cantidad": safe_integer(form.cantidad.data, default=1),
+            "curp": safe_string(form.curp.data),
+            "descripcion": safe_string(form.descripcion.data, save_enie=True),
+            "distrito_id_hasheado": safe_string(form.distrito_id_hasheado.data, to_uppercase=False),
+            "email": safe_email(form.email.data),
+            "nombres": safe_string(form.nombres.data, save_enie=True),
+            "pag_tramite_servicio_clave": safe_clave(form.pag_tramite_servicio_clave.data),
+            "telefono": safe_string(form.telefono.data),
         }
 
         # Enviar al API, donde se creará el cliente de no existir y el pago
@@ -69,7 +71,7 @@ def ingresar():
             abort(400, "No se pudo obtener el URL.")
 
         # Redireccionar a la página de revisión
-        return redirect(url_for("carros.revisar", pag_pago_id_hasheado=datos["id_hasheado"], banco_url=datos["url"]))
+        return redirect(url_for("carros.revisar", id_hasheado=datos["id_hasheado"], banco_url=datos["url"]))
 
     # Tomar por GET la cantidad
     cantidad = safe_integer(request.args.get("cantidad"), default=1)
@@ -81,6 +83,12 @@ def ingresar():
 
     # Tomar por GET la clave de la autoridad
     autoridad_clave = safe_clave(request.args.get("autoridad_clave"))
+
+    # Tomar por GET el id hasheado del distrito
+    distrito_id_hasheado = safe_string(request.args.get("distrito_id_hasheado"), to_uppercase=False)
+
+    # Tomar por GET la descripcion
+    descripcion = safe_string(request.args.get("descripcion"), to_uppercase=False, save_enie=True)
 
     # Consultar tramite-servicio por su clave
     try:
@@ -136,6 +144,25 @@ def ingresar():
         autoridad_descripcion = autoridad_datos["descripcion"]
         distrito_nombre = autoridad_datos["distrito_nombre"]
 
+    # Si viene el id hasheado del distrito
+    if distrito_id_hasheado != "":
+        # Consultar el distrito por su id hasheado
+        try:
+            respuesta = requests.get(
+                f"{API_BASE_URL}/distritos/{distrito_id_hasheado}",
+                timeout=API_TIMEOUT,
+            )
+        except requests.exceptions.ConnectionError as error:
+            abort(500, "No se pudo conectar con la API de autoridades. " + str(error))
+        except requests.exceptions.Timeout as error:
+            abort(500, "Tiempo de espera agotado al conectar con la API de autoridades. " + str(error))
+        except requests.exceptions.HTTPError as error:
+            abort(500, "Error HTTP porque la API de autoridades arrojó un problema: " + str(error))
+        except requests.exceptions.RequestException as error:
+            abort(500, "Error desconocido con la API de autoridades. " + str(error))
+        distrito_datos = respuesta.json()
+        distrito_nombre = distrito_datos["nombre"]
+
     # Validar que haya recibido la descripcion
     if not "descripcion" in datos:
         abort(400, "No se pudo obtener la descripción del trámite o servicio.")
@@ -151,37 +178,42 @@ def ingresar():
     if total <= 0:
         abort(400, "El total debe ser mayor a cero.")
 
-    # Entregar el formulario para ingresar datos personales
-    form.cantidad.data = cantidad
-    form.pag_tramite_servicio_clave.data = pag_tramite_servicio_clave
+    # Dafinir en el formulario sus campos ocultos
     form.autoridad_clave.data = autoridad_clave
+    form.cantidad.data = cantidad
+    form.descripcion.data = descripcion
+    form.distrito_id_hasheado.data = distrito_id_hasheado
+    form.pag_tramite_servicio_clave.data = pag_tramite_servicio_clave
+
+    # Entregar formulario
     return render_template(
         "carros/ingresar.jinja2",
         form=form,
         autoridad_descripcion=autoridad_descripcion,
+        descripcion=descripcion,
         distrito_nombre=distrito_nombre,
         cantidad=cantidad,
-        costo=total,
-        descripcion=datos["descripcion"],
+        total=total,
+        tramite_servicio_descripcion=datos["descripcion"],
     )
 
 
-@carros.route("/carro/<string:pag_pago_id_hasheado>", methods=["GET", "POST"])
-def revisar(pag_pago_id_hasheado):
+@carros.route("/carro/<string:id_hasheado>", methods=["GET", "POST"])
+def revisar(id_hasheado):
     """Revisar antes de ir al banco"""
 
     # Si viene el url del banco
     url = request.args.get(key="banco_url", default="")
 
     # Valiar el ID cifrado
-    pag_pago_id = descifrar_id(pag_pago_id_hasheado)
+    pag_pago_id = descifrar_id(id_hasheado)
     if pag_pago_id is None:
         abort(400, "No es válido el ID del pago.")
 
     # Consultar el pago
     try:
         respuesta = requests.get(
-            f"{API_BASE_URL}/pag_pagos/{pag_pago_id_hasheado}",
+            f"{API_BASE_URL}/pag_pagos/{id_hasheado}",
             timeout=API_TIMEOUT,
         )
         respuesta.raise_for_status()
@@ -203,17 +235,29 @@ def revisar(pag_pago_id_hasheado):
             abort(400, datos["message"])
         abort(400, "No se pudo consultar el carro de pagos.")
 
+    # Validar que se haya recibido la descripcion de la autoridad
+    if not "autoridad_descripcion" in datos:
+        abort(400, "No se recibió la descripcion de la autoridad.")
+
+    # Validar que se haya recibido la cantidad
+    if not "cantidad" in datos:
+        abort(400, "No se recibió la cantidad.")
+
     # Validar que se haya recibido el email
     if not "cit_cliente_nombre" in datos:
         abort(400, "No se recibió el nombre.")
 
+    # Validar que se haya recibido la descripcion
+    if not "descripcion" in datos:
+        abort(400, "No se recibió la descripción.")
+
+    # Validar que se haya recibido el nombre del distrito
+    if not "distrito_nombre" in datos:
+        abort(400, "No se recibió el nombre del distrito.")
+
     # Validar que se haya recibido el email
     if not "email" in datos:
         abort(400, "No se recibió el email.")
-
-    # Validar que se haya recibido el total
-    if not "cantidad" in datos:
-        abort(400, "No se recibió la cantidad.")
 
     # Validar que se haya recibido el total
     if not "estado" in datos:
@@ -227,21 +271,13 @@ def revisar(pag_pago_id_hasheado):
     if not "pag_tramite_servicio_descripcion" in datos:
         abort(400, "No se recibió la descripción del trámite o servicio.")
 
-    # Validar que se haya recibido el total
-    if not "total" in datos:
-        abort(400, "No se recibió el total.")
-
     # Validar que se haya recibido la resultado_tiempo
     if not "resultado_tiempo" in datos:
         abort(400, "No se recibió la fecha y hora del resultado de la operación bancaria.")
 
-    # Validar que se haya recibido la descripcion de la autoridad
-    if not "autoridad_descripcion" in datos:
-        abort(400, "No se recibió la descripcion de la autoridad.")
-
-    # Validar que se haya recibido el nombre del distrito
-    if not "distrito_nombre" in datos:
-        abort(400, "No se recibió el nombre del distrito.")
+    # Validar que se haya recibido el total
+    if not "total" in datos:
+        abort(400, "No se recibió el total.")
 
     # Si NO hay URL y el estado es SOLICITADO
     if url == "" and datos["estado"] == "SOLICITADO":
@@ -251,14 +287,15 @@ def revisar(pag_pago_id_hasheado):
     if datos["estado"] == "PAGADO":
         return render_template(
             "carros/comprobante.jinja2",
-            autoridad=datos["autoridad_descripcion"],
+            autoridad_descripcion=datos["autoridad_descripcion"],
             cantidad=datos["cantidad"],
-            comprobante_url=BASE_URL + url_for("carros.revisar", pag_pago_id_hasheado=pag_pago_id_hasheado),
-            descripcion=datos["pag_tramite_servicio_descripcion"],
-            distrito=datos["distrito_nombre"],
+            cit_cliente_nombre=datos["cit_cliente_nombre"],
+            comprobante_url=BASE_URL + url_for("carros.revisar", id_hasheado=id_hasheado),
+            descripcion=datos["descripcion"],
+            distrito_nombre=datos["distrito_nombre"],
             email=datos["email"],
             folio=datos["folio"],
-            nombre=datos["cit_cliente_nombre"],
+            pag_tramite_servicio_descripcion=datos["pag_tramite_servicio_descripcion"],
             resultado_tiempo=datos["resultado_tiempo"],
             total=datos["total"],
         )
@@ -270,9 +307,13 @@ def revisar(pag_pago_id_hasheado):
     # Como se tiene el URL, entregar la pagina para revisar, con el boton para ir al banco
     return render_template(
         "carros/revisar.jinja2",
-        descripcion=datos["pag_tramite_servicio_descripcion"],
+        autoridad_descripcion=datos["autoridad_descripcion"],
+        cantidad=datos["cantidad"],
+        descripcion=datos["descripcion"],
+        distrito_nombre=datos["distrito_nombre"],
         email=datos["email"],
+        id_hasheado=id_hasheado,
+        pag_tramite_servicio_descripcion=datos["pag_tramite_servicio_descripcion"],
         total=datos["total"],
-        pag_pago_id_hasheado=pag_pago_id_hasheado,
         url=url,
     )
