@@ -13,15 +13,33 @@
                 <div class="card-body">
                     <div class="row">
                         <div class="col-md-12">
-                            <label>Descripción</label>
-                            <input type="text" readonly value="{{ descripcion }}" class="form-control">
+                            <label>Distrito</label>
+                            <input type="text" readonly value="{{ distrito_nombre }}" class="form-control">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <label>Juzgado u oficina</label>
+                            <input type="text" readonly value="{{ autoridad_descripcion }}" class="form-control">
                         </div>
                     </div>
                     <br>
                     <div class="row">
                         <div class="col-md-12">
-                            <label>Correo electrónico</label>
-                            <input type="text" readonly value="{{ email }}" class="form-control">
+                            <label>Cantidad</label>
+                            <input type="text" readonly value="{{ cantidad }}" class="form-control">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <label>Trámite o servicio</label>
+                            <input type="text" readonly value="{{ pag_tramite_servicio_descripcion }}" class="form-control">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <label>Descripción</label>
+                            <input type="text" readonly value="{{ descripcion }}" class="form-control">
                         </div>
                     </div>
                     <br>
@@ -64,7 +82,7 @@
 {% block custom_javascript %}
     <script>
         function consultarTransaccion(){
-            window.location.href = 'https://pagos.justiciadigital.gob.mx/carro/{{ pag_pago_id_hasheado }}' ;
+            window.location.href = 'https://pagos.justiciadigital.gob.mx/carro/{{ id_hasheado }}' ;
         }
     </script>
 {% endblock %}
