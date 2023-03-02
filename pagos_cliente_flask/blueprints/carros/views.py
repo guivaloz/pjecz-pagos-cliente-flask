@@ -29,7 +29,7 @@ def ingresar():
             "cantidad": safe_integer(form.cantidad.data, default=1),
             "curp": safe_string(form.curp.data),
             "descripcion": safe_string(form.descripcion.data, save_enie=True),
-            "distrito_id_hasheado": safe_string(form.distrito_id_hasheado.data, to_uppercase=False),
+            "distrito_clave": safe_clave(form.distrito_clave.data),
             "email": safe_email(form.email.data),
             "nombres": safe_string(form.nombres.data, save_enie=True),
             "pag_tramite_servicio_clave": safe_clave(form.pag_tramite_servicio_clave.data),
@@ -84,8 +84,8 @@ def ingresar():
     # Tomar por GET la clave de la autoridad
     autoridad_clave = safe_clave(request.args.get("autoridad_clave"))
 
-    # Tomar por GET el id hasheado del distrito
-    distrito_id_hasheado = safe_string(request.args.get("distrito_id_hasheado"), to_uppercase=False)
+    # Tomar por GET la clave del distrito
+    distrito_clave = safe_clave(request.args.get("distrito_clave"))
 
     # Tomar por GET la descripcion
     descripcion = safe_string(request.args.get("descripcion"), to_uppercase=False, save_enie=True)
@@ -144,12 +144,12 @@ def ingresar():
         autoridad_descripcion = autoridad_datos["descripcion"]
         distrito_nombre = autoridad_datos["distrito_nombre"]
 
-    # Si viene el id hasheado del distrito
-    if distrito_id_hasheado != "":
+    # Si viene la clave del distrito
+    if distrito_clave != "":
         # Consultar el distrito por su id hasheado
         try:
             respuesta = requests.get(
-                f"{API_BASE_URL}/distritos/{distrito_id_hasheado}",
+                f"{API_BASE_URL}/distritos/{distrito_clave}",
                 timeout=API_TIMEOUT,
             )
         except requests.exceptions.ConnectionError as error:
@@ -182,7 +182,7 @@ def ingresar():
     form.autoridad_clave.data = autoridad_clave
     form.cantidad.data = cantidad
     form.descripcion.data = descripcion
-    form.distrito_id_hasheado.data = distrito_id_hasheado
+    form.distrito_clave.data = distrito_clave
     form.pag_tramite_servicio_clave.data = pag_tramite_servicio_clave
 
     # Entregar formulario
