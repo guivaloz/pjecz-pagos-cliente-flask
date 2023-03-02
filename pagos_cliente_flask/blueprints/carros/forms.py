@@ -17,7 +17,7 @@ class IngresarForm(FlaskForm):
     autoridad_clave = HiddenField("Clave de la autoridad")
     cantidad = HiddenField("Cantidad")
     descripcion = HiddenField("Descripción")
-    distrito_id_hasheado = HiddenField("ID hasheado del distrito")
+    distrito_clave = HiddenField("Clave del distrito")
 
     # Campos que debe llenar el cliente con sus datos personales
     nombres = StringField("Nombres", validators=[DataRequired(), Length(min=3, max=64)])
