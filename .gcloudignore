@@ -2,18 +2,30 @@
 .directory
 .env
 .gcloudignore
-.github
 .gitignore
 .DS_Store
 .~lock.*
 
 *.py[cod]
+*.egg-info/
+*.log
+*.sqlite3
+*.sqlite3-journal
+*.session.sql
+*.xls
+*.xlsx
+*.XLS
+*.XLSX
 
 __pycache__/
 /.git
 /.github
 /.venv
 /.vscode
-/pyproject.toml
+/cli
+/poetry.lock
+/seed
+/setup.cfg
+/sql
 /tests
 /venv

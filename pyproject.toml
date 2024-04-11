@@ -1,27 +1,37 @@
 [tool.poetry]
 name = "pjecz-pagos-cliente-flask"
-version = "1.0.0"
+version = "2.2.0"
 description = "Front-End del Portal de Pagos hecho con Flask."
-authors = ["Guillermo Valdes <guillermo.valdes@pjecz.gob.mx>"]
+authors = ["Guillermo Valdes <guillermo@movimientolibre.com>"]
 license = "AGPL3"
+readme = "README.md"
+packages = [{include = "pjecz_pagos_cliente_flask"}]
 
 [tool.poetry.dependencies]
-python = "^3.10"
-Flask = "^2.2.2"
-Flask-WTF = "^1.1.1"
+python = "^3.11"
+flask = "^3.0.3"
+flask-wtf = "^1.2.1"
 hashids = "^1.3.1"
-Jinja2 = "^3.1.2"
-python-dotenv = "^0.21.1"
-requests = "^2.28.2"
-Unidecode = "^1.3.6"
+jinja2 = "^3.1.3"
+python-dotenv = "^1.0.1"
+requests = "^2.31.0"
+unidecode = "^1.3.8"
 
-[tool.poetry.dev-dependencies]
-pylint = "^2.15.10"
-black = "^22.12.0"
+
+[tool.poetry.group.dev.dependencies]
+black = "^24.3.0"
+isort = "^5.13.2"
+pytest = "^8.1.1"
+pylint = "^3.1.0"
+pre-commit = "^3.7.0"
 
 [build-system]
-requires = ["poetry-core>=1.0.0"]
+requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.black]
-line-length = 256
+line-length = 128
+
+[tool.isort]
+line_length = 128
+profile = "black"
