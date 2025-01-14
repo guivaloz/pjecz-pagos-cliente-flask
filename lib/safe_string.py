@@ -1,7 +1,9 @@
 """
 Safe string
 """
+
 import re
+
 from unidecode import unidecode
 
 EMAIL_REGEXP = r"^[\w.-]+@[\w.-]+\.\w+$"

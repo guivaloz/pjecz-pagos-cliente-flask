@@ -1,12 +1,12 @@
 """
 Carros, vistas
 """
-from flask import abort, Blueprint, render_template, redirect, request, url_for
-import requests
 
-from config.settings import API_BASE_URL, API_TIMEOUT, BASE_URL
-from lib.safe_string import safe_clave, safe_email, safe_integer, safe_string
+import requests
+from flask import Blueprint, abort, current_app, redirect, render_template, request, url_for
+
 from lib.hashids import descifrar_id
+from lib.safe_string import safe_clave, safe_email, safe_integer, safe_string
 
 from .forms import IngresarForm
 
@@ -20,7 +20,6 @@ def ingresar():
     # Si viene el formulario
     form = IngresarForm()
     if form.validate_on_submit():
-
         # Preparar el cuerpo a enviar a la API "/pag_pagos/carro"
         request_body = {
             "apellido_primero": safe_string(form.apellido_primero.data, save_enie=True),
@@ -39,9 +38,9 @@ def ingresar():
         # Enviar al API, donde se creará el cliente de no existir y el pago
         try:
             respuesta = requests.post(
-                f"{API_BASE_URL}/pag_pagos/carro",
+                f"{current_app.config['API_BASE_URL']}/pag_pagos/carro",
                 json=request_body,
-                timeout=API_TIMEOUT,
+                timeout=current_app.config["API_TIMEOUT"],
             )
             respuesta.raise_for_status()
         except requests.exceptions.ConnectionError as error:
@@ -93,8 +92,8 @@ def ingresar():
     # Consultar tramite-servicio por su clave
     try:
         respuesta = requests.get(
-            f"{API_BASE_URL}/pag_tramites_servicios/{pag_tramite_servicio_clave}",
-            timeout=API_TIMEOUT,
+            f"{current_app.config['API_BASE_URL']}/pag_tramites_servicios/{pag_tramite_servicio_clave}",
+            timeout=current_app.config["API_TIMEOUT"],
         )
         respuesta.raise_for_status()
     except requests.exceptions.ConnectionError as error:
@@ -122,8 +121,8 @@ def ingresar():
         # Consultar la autoridad por su clave
         try:
             respuesta = requests.get(
-                f"{API_BASE_URL}/autoridades/{autoridad_clave}",
-                timeout=API_TIMEOUT,
+                f"{current_app.config['API_BASE_URL']}/autoridades/{autoridad_clave}",
+                timeout=current_app.config["API_TIMEOUT"],
             )
         except requests.exceptions.ConnectionError as error:
             abort(500, "No se pudo conectar con la API de autoridades. " + str(error))
@@ -149,8 +148,8 @@ def ingresar():
         # Consultar el distrito por su id hasheado
         try:
             respuesta = requests.get(
-                f"{API_BASE_URL}/distritos/{distrito_clave}",
-                timeout=API_TIMEOUT,
+                f"{current_app.config['API_BASE_URL']}/distritos/{distrito_clave}",
+                timeout=current_app.config["API_TIMEOUT"],
             )
         except requests.exceptions.ConnectionError as error:
             abort(500, "No se pudo conectar con la API de autoridades. " + str(error))
@@ -213,8 +212,8 @@ def revisar(id_hasheado):
     # Consultar el pago
     try:
         respuesta = requests.get(
-            f"{API_BASE_URL}/pag_pagos/{id_hasheado}",
-            timeout=API_TIMEOUT,
+            f"{current_app.config['API_BASE_URL']}/pag_pagos/{id_hasheado}",
+            timeout=current_app.config["API_TIMEOUT"],
         )
         respuesta.raise_for_status()
     except requests.exceptions.ConnectionError as error:
@@ -290,7 +289,7 @@ def revisar(id_hasheado):
             autoridad_descripcion=datos["autoridad_descripcion"],
             cantidad=datos["cantidad"],
             cit_cliente_nombre=datos["cit_cliente_nombre"],
-            comprobante_url=BASE_URL + url_for("carros.revisar", id_hasheado=id_hasheado),
+            comprobante_url=current_app.config["BASE_URL"] + url_for("carros.revisar", id_hasheado=id_hasheado),
             descripcion=datos["descripcion"],
             distrito_nombre=datos["distrito_nombre"],
             email=datos["email"],

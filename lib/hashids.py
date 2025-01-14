@@ -1,13 +1,16 @@
 """
 Cifrado y descrifado de ID por medio de Hashids
 """
-from typing import Any
+
 import re
+from typing import Any
+
 from hashids import Hashids
 
-from config.settings import SALT
+from config.settings import get_settings
 
-hashids = Hashids(SALT, min_length=8)
+settings = get_settings()
+hashids = Hashids(salt=settings.SALT, min_length=8)
 hashid_regexp = re.compile("[0-9a-zA-Z]{8,16}")
 
 

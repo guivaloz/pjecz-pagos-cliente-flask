@@ -1,29 +1,35 @@
 [tool.poetry]
 name = "pjecz-pagos-cliente-flask"
-version = "2.2.0"
+version = "2.2.1"
 description = "Front-End del Portal de Pagos hecho con Flask."
 authors = ["Guillermo Valdes <guillermo@movimientolibre.com>"]
 license = "AGPL3"
 readme = "README.md"
-packages = [{include = "pjecz_pagos_cliente_flask"}]
+package-mode = false
 
 [tool.poetry.dependencies]
 python = "^3.11"
 flask = "^3.0.3"
 flask-wtf = "^1.2.1"
+google-cloud = "^0.34.0"
+google-cloud-secret-manager = "^2.20.2"
 hashids = "^1.3.1"
-jinja2 = "^3.1.3"
+jinja2 = "^3.1.4"
+pydantic = "^2.8.2"
+pydantic-settings = "^2.4.0"
 python-dotenv = "^1.0.1"
-requests = "^2.31.0"
 unidecode = "^1.3.8"
 
 
 [tool.poetry.group.dev.dependencies]
-black = "^24.3.0"
+black = "^24.8.0"
 isort = "^5.13.2"
-pytest = "^8.1.1"
-pylint = "^3.1.0"
-pre-commit = "^3.7.0"
+pylint = "^3.2.6"
+pytest = "^8.3.2"
+pre-commit = "^3.8.0"
+
+[tool.poetry.requires-plugins]
+poetry-plugin-export = ">=1.8"
 
 [build-system]
 requires = ["poetry-core"]

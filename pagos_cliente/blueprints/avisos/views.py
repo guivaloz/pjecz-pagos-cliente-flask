@@ -1,6 +1,7 @@
 """
 Avisos, vistas
 """
+
 from flask import Blueprint, render_template
 
 avisos = Blueprint("avisos", __name__, template_folder="templates")

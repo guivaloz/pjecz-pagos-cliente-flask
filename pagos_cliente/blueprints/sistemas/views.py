@@ -1,6 +1,7 @@
 """
 Sistemas, vistas
 """
+
 from flask import Blueprint, render_template
 
 sistemas = Blueprint("sistemas", __name__, template_folder="templates")

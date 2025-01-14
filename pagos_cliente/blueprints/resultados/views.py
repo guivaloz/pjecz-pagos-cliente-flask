@@ -1,11 +1,11 @@
 """
 Resultados, vistas
 """
-from flask import abort, Blueprint, render_template, request, redirect, url_for
-import requests
 
-from pagos_cliente_flask.extensions import csrf
-from config.settings import API_BASE_URL, API_TIMEOUT
+import requests
+from flask import Blueprint, abort, current_app, redirect, render_template, request, url_for
+
+from pagos_cliente.extensions import csrf
 
 resultados = Blueprint("resultados", __name__, template_folder="templates")
 
@@ -29,9 +29,9 @@ def procesar_lo_que_viene_del_banco():
     # Enviar al API, donde se actualizará el pago
     try:
         respuesta = requests.post(
-            f"{API_BASE_URL}/pag_pagos/resultado",
+            f"{current_app.config['API_BASE_URL']}/pag_pagos/resultado",
             json=request_body,
-            timeout=API_TIMEOUT,
+            timeout=current_app.config["API_TIMEOUT"],
         )
     except requests.exceptions.ConnectionError as error:
         abort(500, "No se pudo conectar con la API de pagos. " + str(error))
