@@ -60,7 +60,7 @@ class Settings(BaseSettings):
     """Settings"""
 
     API_BASE_URL: str = get_secret("api_base_url")
-    API_TIMEOUT: str = get_secret("api_timeout")
+    API_TIMEOUT: int = int(get_secret("api_timeout"))
     BASE_URL: str = get_secret("base_url")
     SALT: str = get_secret("salt")
     SECRET_KEY: str = get_secret("secret_key")

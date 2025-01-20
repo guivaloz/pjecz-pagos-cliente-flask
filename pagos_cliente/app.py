@@ -4,6 +4,7 @@ Flask App
 
 from flask import Flask
 
+from config.settings import Settings
 from pagos_cliente.blueprints.avisos.views import avisos
 from pagos_cliente.blueprints.carros.views import carros
 from pagos_cliente.blueprints.resultados.views import resultados
@@ -18,7 +19,7 @@ def create_app():
     app = Flask(__name__)
 
     # Cargar la configuración
-    app.config.from_object("config.settings")
+    app.config.from_object(Settings())
 
     # Registrar blueprints
     app.register_blueprint(carros)
