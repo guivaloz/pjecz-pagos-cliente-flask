@@ -1,13 +1,15 @@
 """
 Flask App
 """
+
 from flask import Flask
 
-from .blueprints.avisos.views import avisos
-from .blueprints.carros.views import carros
-from .blueprints.resultados.views import resultados
-from .blueprints.sistemas.views import sistemas
-from .extensions import csrf
+from config.settings import Settings
+from pagos_cliente.blueprints.avisos.views import avisos
+from pagos_cliente.blueprints.carros.views import carros
+from pagos_cliente.blueprints.resultados.views import resultados
+from pagos_cliente.blueprints.sistemas.views import sistemas
+from pagos_cliente.extensions import csrf
 
 
 def create_app():
@@ -17,7 +19,7 @@ def create_app():
     app = Flask(__name__)
 
     # Cargar la configuración
-    app.config.from_object("config.settings")
+    app.config.from_object(Settings())
 
     # Registrar blueprints
     app.register_blueprint(carros)

@@ -1,12 +1,12 @@
 """
 Carros, vistas
 """
-from flask import abort, Blueprint, render_template, redirect, request, url_for
-import requests
 
-from config.settings import API_BASE_URL, API_TIMEOUT, BASE_URL
-from lib.safe_string import safe_clave, safe_email, safe_integer, safe_string
+import requests
+from flask import Blueprint, abort, current_app, redirect, render_template, request, url_for
+
 from lib.hashids import descifrar_id
+from lib.safe_string import safe_clave, safe_email, safe_integer, safe_string
 
 from .forms import IngresarForm
 
@@ -20,7 +20,6 @@ def ingresar():
     # Si viene el formulario
     form = IngresarForm()
     if form.validate_on_submit():
-
         # Preparar el cuerpo a enviar a la API "/pag_pagos/carro"
         request_body = {
             "apellido_primero": safe_string(form.apellido_primero.data, save_enie=True),
@@ -39,9 +38,9 @@ def ingresar():
         # Enviar al API, donde se creará el cliente de no existir y el pago
         try:
             respuesta = requests.post(
-                f"{API_BASE_URL}/pag_pagos/carro",
+                f"{current_app.config['API_BASE_URL']}/pag_pagos/carro",
                 json=request_body,
-                timeout=API_TIMEOUT,
+                timeout=current_app.config["API_TIMEOUT"],
             )
             respuesta.raise_for_status()
         except requests.exceptions.ConnectionError as error:
@@ -54,7 +53,7 @@ def ingresar():
             abort(500, "Error desconocido con la API de pagos. " + str(error))
         datos = respuesta.json()
 
-        # Verificar que haya tenido exito
+        # Verificar que haya tenido éxito
         if not "success" in datos:
             abort(400, "No se pudo crear el carro para pagar.")
         if not datos["success"]:
@@ -62,7 +61,7 @@ def ingresar():
                 abort(400, datos["message"])
             abort(400, "No se pudo crear el carro para pagar.")
 
-        # Validar que haya recibido el id del pago hasheado
+        # Validar que haya recibido el ID del pago hasheado
         if not "id_hasheado" in datos:
             abort(400, "No se pudo obtener el id del pago hasheado.")
 
@@ -76,7 +75,7 @@ def ingresar():
     # Tomar por GET la cantidad
     cantidad = safe_integer(request.args.get("cantidad"), default=1)
 
-    # Tomar por GET la clave del tramite y servicio
+    # Tomar por GET la clave del trámite y servicio
     pag_tramite_servicio_clave = safe_clave(request.args.get("clave"))
     if pag_tramite_servicio_clave == "":
         abort(400, "No se ha proporcionado la clave del trámite o servicio.")
@@ -87,14 +86,14 @@ def ingresar():
     # Tomar por GET la clave del distrito
     distrito_clave = safe_clave(request.args.get("distrito_clave"))
 
-    # Tomar por GET la descripcion
+    # Tomar por GET la descripción
     descripcion = safe_string(request.args.get("descripcion"), to_uppercase=False, save_enie=True)
 
     # Consultar tramite-servicio por su clave
     try:
         respuesta = requests.get(
-            f"{API_BASE_URL}/pag_tramites_servicios/{pag_tramite_servicio_clave}",
-            timeout=API_TIMEOUT,
+            f"{current_app.config['API_BASE_URL']}/pag_tramites_servicios/{pag_tramite_servicio_clave}",
+            timeout=current_app.config["API_TIMEOUT"],
         )
         respuesta.raise_for_status()
     except requests.exceptions.ConnectionError as error:
@@ -107,7 +106,7 @@ def ingresar():
         abort(500, "Error desconocido con la API de pagos. " + str(error))
     datos = respuesta.json()
 
-    # Verificar que haya tenido exito
+    # Verificar que haya tenido éxito
     if not "success" in datos:
         abort(400, "No se pudo consultar el trámite o servicio.")
     if not datos["success"]:
@@ -122,8 +121,8 @@ def ingresar():
         # Consultar la autoridad por su clave
         try:
             respuesta = requests.get(
-                f"{API_BASE_URL}/autoridades/{autoridad_clave}",
-                timeout=API_TIMEOUT,
+                f"{current_app.config['API_BASE_URL']}/autoridades/{autoridad_clave}",
+                timeout=current_app.config["API_TIMEOUT"],
             )
         except requests.exceptions.ConnectionError as error:
             abort(500, "No se pudo conectar con la API de autoridades. " + str(error))
@@ -149,8 +148,8 @@ def ingresar():
         # Consultar el distrito por su id hasheado
         try:
             respuesta = requests.get(
-                f"{API_BASE_URL}/distritos/{distrito_clave}",
-                timeout=API_TIMEOUT,
+                f"{current_app.config['API_BASE_URL']}/distritos/{distrito_clave}",
+                timeout=current_app.config["API_TIMEOUT"],
             )
         except requests.exceptions.ConnectionError as error:
             abort(500, "No se pudo conectar con la API de autoridades. " + str(error))
@@ -163,7 +162,7 @@ def ingresar():
         distrito_datos = respuesta.json()
         distrito_nombre = distrito_datos["nombre"]
 
-    # Validar que haya recibido la descripcion
+    # Validar que haya recibido la descripción
     if not "descripcion" in datos:
         abort(400, "No se pudo obtener la descripción del trámite o servicio.")
 
@@ -178,7 +177,7 @@ def ingresar():
     if total <= 0:
         abort(400, "El total debe ser mayor a cero.")
 
-    # Dafinir en el formulario sus campos ocultos
+    # Definir en el formulario sus campos ocultos
     form.autoridad_clave.data = autoridad_clave
     form.cantidad.data = cantidad
     form.descripcion.data = descripcion
@@ -205,7 +204,7 @@ def revisar(id_hasheado):
     # Si viene el url del banco
     url = request.args.get(key="banco_url", default="")
 
-    # Valiar el ID cifrado
+    # Validar el ID cifrado
     pag_pago_id = descifrar_id(id_hasheado)
     if pag_pago_id is None:
         abort(400, "No es válido el ID del pago.")
@@ -213,8 +212,8 @@ def revisar(id_hasheado):
     # Consultar el pago
     try:
         respuesta = requests.get(
-            f"{API_BASE_URL}/pag_pagos/{id_hasheado}",
-            timeout=API_TIMEOUT,
+            f"{current_app.config['API_BASE_URL']}/pag_pagos/{id_hasheado}",
+            timeout=current_app.config["API_TIMEOUT"],
         )
         respuesta.raise_for_status()
     except requests.exceptions.ConnectionError as error:
@@ -227,7 +226,7 @@ def revisar(id_hasheado):
         abort(500, "Error desconocido con la API de pagos. " + str(error))
     datos = respuesta.json()
 
-    # Verificar que haya tenido exito
+    # Verificar que haya tenido éxito
     if not "success" in datos:
         abort(400, "No se pudo consultar el carro de pagos.")
     if not datos["success"]:
@@ -235,7 +234,7 @@ def revisar(id_hasheado):
             abort(400, datos["message"])
         abort(400, "No se pudo consultar el carro de pagos.")
 
-    # Validar que se haya recibido la descripcion de la autoridad
+    # Validar que se haya recibido la descripción de la autoridad
     if not "autoridad_descripcion" in datos:
         abort(400, "No se recibió la descripcion de la autoridad.")
 
@@ -247,7 +246,7 @@ def revisar(id_hasheado):
     if not "cit_cliente_nombre" in datos:
         abort(400, "No se recibió el nombre.")
 
-    # Validar que se haya recibido la descripcion
+    # Validar que se haya recibido la descripción
     if not "descripcion" in datos:
         abort(400, "No se recibió la descripción.")
 
@@ -263,11 +262,11 @@ def revisar(id_hasheado):
     if not "estado" in datos:
         abort(400, "No se recibió el estado del pago.")
 
-    # Validar que se haya recibido la descripcion
+    # Validar que se haya recibido la descripción
     if not "folio" in datos:
         abort(400, "No se recibió el folio.")
 
-    # Validar que se haya recibido la descripcion
+    # Validar que se haya recibido la descripción
     if not "pag_tramite_servicio_descripcion" in datos:
         abort(400, "No se recibió la descripción del trámite o servicio.")
 
@@ -290,7 +289,7 @@ def revisar(id_hasheado):
             autoridad_descripcion=datos["autoridad_descripcion"],
             cantidad=datos["cantidad"],
             cit_cliente_nombre=datos["cit_cliente_nombre"],
-            comprobante_url=BASE_URL + url_for("carros.revisar", id_hasheado=id_hasheado),
+            comprobante_url=current_app.config["BASE_URL"] + url_for("carros.revisar", id_hasheado=id_hasheado),
             descripcion=datos["descripcion"],
             distrito_nombre=datos["distrito_nombre"],
             email=datos["email"],
@@ -304,7 +303,7 @@ def revisar(id_hasheado):
     if datos["estado"] == "FALLIDO" or datos["estado"] == "CANCELADO":
         return redirect(url_for("resultados.resultado_fallido", folio=datos["folio"]))
 
-    # Como se tiene el URL, entregar la pagina para revisar, con el boton para ir al banco
+    # Como se tiene el URL, entregar la página para revisar, con el botón para ir al banco
     return render_template(
         "carros/revisar.jinja2",
         autoridad_descripcion=datos["autoridad_descripcion"],
