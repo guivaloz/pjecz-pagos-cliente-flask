@@ -3,7 +3,7 @@ Resultados, vistas
 """
 
 import requests
-from flask import Blueprint, abort, current_app, redirect, render_template, request, url_for
+from flask import Blueprint, abort, current_app, jsonify, redirect, render_template, request, url_for
 
 from pagos_cliente.extensions import csrf
 
@@ -43,7 +43,7 @@ def procesar_lo_que_viene_del_banco():
         abort(500, "Error desconocido con la API de pagos. " + str(error))
     datos = respuesta.json()
 
-    # Verificar que haya tenido exito
+    # Verificar que haya tenido éxito
     if not "success" in datos:
         abort(400, "No se pudo actualizar el carro de pagos.")
     if not datos["success"]:
@@ -59,12 +59,18 @@ def procesar_lo_que_viene_del_banco():
     if not "folio" in datos:
         abort(400, "No se pudo obtener el folio del pago.")
 
+    # Preparar un mensaje en JSON para responder al banco con estatus 200
+    response = jsonify({"message": "Datos recibidos satisfactoriamente"})
+    response.status_code = 200
+
     # Redirigir a la página de resultado PAGADO
     if datos["estado"] == "PAGADO":
-        return redirect(url_for("resultados.resultado_pagado", folio=datos["folio"]))
+        pagado_url = url_for("resultados.resultado_pagado", folio=datos["folio"])
+        return redirect(pagado_url), response.status_code
 
-    # De lo contrario, el reultado es FALLIDO
-    return redirect(url_for("resultados.resultado_fallido", folio=datos["folio"]))
+    # De lo contrario, redirigir a la página de resultado FALLIDO
+    fallido_url = url_for("resultados.resultado_fallido", folio=datos["folio"])
+    return redirect(fallido_url), response.status_code
 
 
 @resultados.route("/resultado/pagado", methods=["GET", "POST"])
