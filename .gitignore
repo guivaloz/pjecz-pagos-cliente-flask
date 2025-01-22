@@ -2,6 +2,7 @@
 .DS_Store
 .~lock.*
 
+*.code-workspace
 *.csv
 *.html
 *.log
@@ -24,4 +25,5 @@ __pycache__/
 
 /.idea/
 /.venv/
+/seed/
 /venv/
