@@ -3,13 +3,13 @@ Settings
 
 Para produccion, configure los siguientes secretos en Google Cloud Secret Manager:
 
-- pjecz_pagos_cliente_api_base_url
-- pjecz_pagos_cliente_api_timeout
-- pjecz_pagos_cliente_base_url
-- pjecz_pagos_cliente_salt
-- pjecz_pagos_cliente_secret_key
-- pjecz_pagos_cliente_recaptcha_public_key
-- pjecz_pagos_cliente_recaptcha_private_key
+- pjecz_pagos_cliente_flask_api_base_url
+- pjecz_pagos_cliente_flask_api_timeout
+- pjecz_pagos_cliente_flask_base_url
+- pjecz_pagos_cliente_flask_salt
+- pjecz_pagos_cliente_flask_secret_key
+- pjecz_pagos_cliente_flask_recaptcha_public_key
+- pjecz_pagos_cliente_flask_recaptcha_private_key
 
 Para desarrollo, debe crear un archivo .env con las variables de entorno:
 
@@ -32,7 +32,7 @@ from pydantic_settings import BaseSettings
 load_dotenv()
 
 PROJECT_ID = os.getenv("PROJECT_ID", "")  # Por defecto esta vacio, esto significa estamos en modo local
-SERVICE_PREFIX = os.getenv("SERVICE_PREFIX", "pjecz_hercules")
+SERVICE_PREFIX = os.getenv("SERVICE_PREFIX", "pjecz_pagos_cliente_flask")
 
 
 def get_secret(secret_id: str) -> str:

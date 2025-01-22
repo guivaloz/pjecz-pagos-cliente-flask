@@ -60,27 +60,32 @@ def procesar_lo_que_viene_del_banco():
         abort(400, "No se pudo obtener el folio del pago.")
 
     #
-    # Comentado porque no funciona como se esperaba
+    # ANTERIOR, sin enviar status 200 al banco
     #
-    # Preparar un mensaje en JSON para responder al banco con estatus 200
-    # response = jsonify({"message": "Datos recibidos satisfactoriamente"})
-    # response.status_code = 200
-    #
+
     # Redirigir a la página de resultado PAGADO
     # if datos["estado"] == "PAGADO":
-    #     pagado_url = url_for("resultados.resultado_pagado", folio=datos["folio"])
-    #     return redirect(pagado_url), response.status_code
+    #     return redirect(url_for("resultados.resultado_pagado", folio=datos["folio"]))
     #
-    # De lo contrario, redirigir a la página de resultado FALLIDO
-    # fallido_url = url_for("resultados.resultado_fallido", folio=datos["folio"])
-    # return redirect(fallido_url), response.status_code
+    # De lo contrario, el reultado es FALLIDO
+    # return redirect(url_for("resultados.resultado_fallido", folio=datos["folio"]))
+
+    #
+    # NUEVO, enviar estatus 200 al banco
+    #
+
+    # Preparar un mensaje en JSON para responder al banco con estatus 200
+    response = jsonify({"message": "Datos recibidos satisfactoriamente"})
+    response.status_code = 200
 
     # Redirigir a la página de resultado PAGADO
     if datos["estado"] == "PAGADO":
-        return redirect(url_for("resultados.resultado_pagado", folio=datos["folio"]))
+        pagado_url = url_for("resultados.resultado_pagado", folio=datos["folio"])
+        return redirect(pagado_url), response.status_code
 
-    # De lo contrario, el reultado es FALLIDO
-    return redirect(url_for("resultados.resultado_fallido", folio=datos["folio"]))
+    # De lo contrario, redirigir a la página de resultado FALLIDO
+    fallido_url = url_for("resultados.resultado_fallido", folio=datos["folio"])
+    return redirect(fallido_url), response.status_code
 
 
 @resultados.route("/resultado/pagado", methods=["GET", "POST"])
